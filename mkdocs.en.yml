@@ -1,0 +1,72 @@
+site_name: Nmap Professional Reference
+site_description: Professional English Nmap documentation for learning, quick reference, and authorized security assessment
+site_url: https://mmkarii.github.io/nmap-fa-reference/en/
+repo_url: https://github.com/MMKarii/nmap-fa-reference
+repo_name: MMKarii/nmap-fa-reference
+edit_uri: edit/main/docs/en/
+docs_dir: docs/en
+site_dir: site/en
+
+theme:
+  name: material
+  language: en
+  direction: ltr
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Start Here:
+      - Learning Path: learning-path.md
+      - Cheat Sheet: cheatsheet.md
+  - Fundamentals:
+      - "1. Nmap Fundamentals": 01-introduction.md
+      - "2. Syntax and Command Structure": 02-syntax.md
+      - "3. Host Discovery": 03-host-discovery.md
+      - "4. Port Specification": 04-port-specification.md
+  - Scanning and Detection:
+      - "5. Scan Types": 05-scan-types.md
+      - "6. Service and Version Detection": 06-service-version-detection.md
+      - "7. OS Detection": 07-os-detection.md
+      - "8. NSE": 08-nse.md
+  - Operations:
+      - "9. Firewall / IDS / IPS Evasion": 09-firewall-ids-ips-evasion.md
+      - "10. Timing and Performance": 10-timing-performance.md
+      - "11. Output and Reporting": 11-output-reporting.md
+      - "12. Practical Scenarios": 12-practical-scenarios.md
+  - Analysis:
+      - "13. Output Analysis": 13-output-analysis.md
+      - "14. Common Mistakes": 14-common-mistakes.md
+  - References: references.md
+  - Disclaimer: disclaimer.md
