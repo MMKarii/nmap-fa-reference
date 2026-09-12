@@ -1,64 +1,108 @@
 # ۲. Syntax و ساختار دستورات
 
-## ساختار کلی دستور nmap
+<div class="chapter-meta">
+<strong>هدف فصل:</strong> ساخت فرمان‌های معتبر Nmap و جلوگیری از ترکیب Optionهای ناسازگار.
+</div>
+
+## ساختار کلی
 
 ```bash
-nmap [ <Scan Type> ...] [ <Options> ] { <target specification> }
+nmap [ <Scan Type> ... ] [ <Options> ] { <target specification> }
 ```
 
-- **`<Scan Type>`:** تعیین کننده روش اسکن پورت (مانند -sS، -sT).
+- **`<Scan Type>`:** روش Port Scan مانند `-sS`، `-sT` یا `-sU`.
+- **`<Options>`:** تنظیم Host Discovery، Port Selection، Version Detection، Timing، Output و NSE.
+- **`<target specification>`:** IP، Hostname، Range، CIDR یا Target List.
 
-- **`<Options>`:** سوییچ‌ها و پرچم‌های تنظیم‌کننده رفتار Nmap.
+## ترتیب نوشتن Optionها
 
-- **`<target specification>`:** تعیین هدف یا اهداف اسکن. می‌تواند آدرس IP، رنج IP، نام هاست یا ترکیبی از آن‌ها باشد.
+Nmap برای بسیاری از Optionها به ترتیب ظاهری خاصی وابسته نیست. برای خوانایی، این ترتیب پیشنهاد می‌شود:
 
-## ترتیب اجرای سوییچ‌ها
+1. Scan Type
+2. Host Discovery
+3. Port Specification
+4. Service / OS Detection
+5. NSE
+6. Timing
+7. Output
+8. Target
 
-Nmap به طور کلی سوییچ‌ها را به ترتیب زیر پردازش و اجرا می‌کند:
-
-۱. تعیین اهداف (Target Specification).
-۲. گزینه‌های میزبانی (Host Discovery Options مانند -sn، -Pn).
-۳. گزینه‌های اسکن (Scan Techniques مانند -sS، -sU).
-۴. گزینه‌های پورت (Port Specification مانند -p، -F).
-۵. گزینه‌های شناسایی سرویس و سیستم عامل (مانند -sV، -O).
-۶. گزینه‌های زمان‌بندی و عملکرد (Timing and Performance مانند -T).
-۷. گزینه‌های خروجی (Output Options مانند -oN).
-۸. گزینه‌های متفرقه (Misc Options مانند --script).
-
-## اولویت پارامترها
-
-اگر پارامترهای متضادی تنظیم شوند، معمولاً آخرین پارامتر نوشته شده در خط فرمان مقدم است. برای مثال، در دستور nmap -sS -sT 192.168.1.1، اسکن -sT (TCP Connect) اجرا می‌شود چون آخرین اسکن تعریف شده است.
-
-## ترکیب حرفه‌ای سوییچ‌ها
-
-ترکیب سوییچ‌ها باید منطقی و متناسب با هدف اسکن باشد.
-
-**مثال ترکیب سریع و کم‌سر و صدا:**
+مثال:
 
 ```bash
-nmap -sS -Pn -T2 --top-ports 100 192.168.1.0/24
+sudo nmap -sS -Pn -p 22,80,443 -sV -T3 --reason -oA assessment 192.168.1.10
 ```
 
-**مثال ترکیب جامع و تهاجمی:**
+## Scan Typeهای سازگار و ناسازگار
+
+این تصور که «اگر دو Scan Type متضاد بنویسیم، آخرین مورد اجرا می‌شود» قابل اتکا نیست. Nmap فقط ترکیب‌های مشخصی از Scan Typeها را می‌پذیرد.
+
+طبق Reference Guide، معمولاً فقط یک TCP Scan Type در هر اجرا استفاده می‌شود. UDP Scan (`-sU`) و یکی از SCTP Scanها می‌توانند همراه با یک TCP Scan Type اجرا شوند.
+
+نمونه معتبر:
 
 ```bash
-nmap -sS -sU -sV -O -p- -T4 --script vuln 10.0.0.1
+sudo nmap -sS -sU -p T:22,80,443,U:53,161 192.168.1.10
 ```
 
-**مثال کشف اولیه:**
+برای ترکیب‌های نامعتبر، روی رفتار «آخرین Option برنده است» حساب نکنید. خطای Nmap را بررسی کنید.
+
+## Target Specification
+
+نمونه‌های متداول:
 
 ```bash
-nmap -sn -PE 192.168.1.0/24
+nmap 192.168.1.10
+```
+
+```bash
+nmap 192.168.1.0/24
+```
+
+```bash
+nmap 192.168.1.10-50
+```
+
+```bash
+nmap example.com
+```
+
+```bash
+nmap -iL targets.txt
+```
+
+## ترکیب‌های عملی
+
+کشف Host بدون Port Scan:
+
+```bash
+nmap -sn 192.168.1.0/24
+```
+
+TCP SYN Scan روی Portهای رایج:
+
+```bash
+sudo nmap -sS --top-ports 100 192.168.1.10
+```
+
+Service Detection با Output ساختاریافته:
+
+```bash
+sudo nmap -sS -sV --top-ports 200 --reason 192.168.1.10 -oA service_assessment
 ```
 
 ## خطاهای رایج در Syntax
 
-- **عدم استفاده از دسترسی Root:** بسیاری از اسکن‌ها (مانند -sS، -sU) نیاز به دسترسی سطح بالا دارند.
+- **اجرای Raw Packet Scan بدون Privilege مناسب:** Scanهایی مثل `-sS` و `-sU` روی Unix معمولاً به دسترسی privileged نیاز دارند.
+- **ترکیب Optionهای بی‌معنی:** مثلاً `-sn` یعنی Port Scan انجام نشود، پس ترکیب آن با Port Specification برای Port Scan هدف معمولی ندارد.
+- **فراموش کردن Target:** Nmap باید Target یا `-iL` داشته باشد.
+- **استفاده اشتباه از Range:** `192.168.1.10-50` معتبر است، ولی Rangeهای مبهم یا ناقص ممکن است Target ناخواسته ایجاد کنند.
+- **فراموش کردن Argument:** Optionهایی مثل `-p`، `-oN` و `--script-args` به مقدار نیاز دارند.
 
-- **ترکیب متضاد:** ترکیب -sn (کشف میزبان بدون اسکن پورت) با -p (تعیین پورت) معمولاً منطقی نیست.
+!!! note "درباره -p80"
+    در عمل Nmap فرم‌هایی مثل `-p80` را هم می‌پذیرد. برای خوانایی در این مستند بیشتر از فرم `-p 80` استفاده می‌کنیم.
 
-- **فراموش کردن هدف:** مشخص نکردن آدرس هدف.
+## مرجع رسمی
 
-- **استفاده نادرست از رنج‌ها:** فرمت نادرست رنج IP (مثلاً 192.168.1.1-10 صحیح است).
-
-- **مشکل در قرارگیری پرچم‌ها:** برخی پرچم‌ها نیاز به آرگومان دارند (مانند -p 80 نه -p80 یا -p به تنهایی).
+- [Nmap Reference Guide](https://nmap.org/book/man.html)
+- [Port Scanning Techniques](https://nmap.org/book/man-port-scanning-techniques.html)
