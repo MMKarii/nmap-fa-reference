@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/fa/assets/brand-banner.svg" alt="Nmap Persian Reference" width="100%">
+  <img src="docs/fa/assets/brand-banner.jpg" alt="Nmap Persian Reference" width="100%">
 </p>
 
 <p align="center"><a href="README.md">انتخاب زبان</a> · <a href="README.en.md">English</a></p>
@@ -12,7 +12,8 @@
   <a href="https://mmkarii.github.io/nmap-fa-reference/fa/">مطالعه نسخه آنلاین</a> ·
   <a href="docs/fa/learning-path.md">مسیر یادگیری</a> ·
   <a href="docs/fa/cheatsheet.md">Cheat Sheet</a> ·
-  <a href="docs/fa/references.md">منابع رسمی</a>
+  <a href="docs/fa/references.md">منابع رسمی</a> ·
+  <a href="LICENSE">مجوز</a>
 </p>
 
 > [!IMPORTANT]
@@ -62,3 +63,7 @@ sudo nmap -sS -sV --top-ports 200 -T3 --reason target -oA initial_assessment
 ## استاندارد فنی
 
 Nmap Reference Guide و NSEDoc منابع اصلی بازبینی این پروژه هستند. برای رفتار دقیق و نسخه‌محور هر Option، مستند رسمی Nmap مرجع نهایی است.
+
+## مجوز
+
+محتوای اصلی این پروژه تحت مجوز Creative Commons Attribution 4.0 International منتشر می‌شود. جزئیات در فایل [LICENSE](LICENSE) آمده است.
