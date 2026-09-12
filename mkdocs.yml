@@ -1,0 +1,46 @@
+site_name: مرجع جامع Nmap به زبان فارسی
+site_description: مستند فارسی Nmap برای مطالعه و مراجعه سریع
+site_url: https://mmkarii.github.io/nmap-fa-reference/
+repo_url: https://github.com/MMKarii/nmap-fa-reference
+repo_name: MMKarii/nmap-fa-reference
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: fa
+  direction: rtl
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+
+nav:
+  - خانه: index.md
+  - "۱. معرفی بنیادین Nmap": 01-introduction.md
+  - "۲. Syntax و ساختار دستورات": 02-syntax.md
+  - "۳. Host Discovery، کشف میزبان": 03-host-discovery.md
+  - "۴. Port Specification": 04-port-specification.md
+  - "۵. Scan Types، انواع اسکن": 05-scan-types.md
+  - "۶. Service & Version Detection": 06-service-version-detection.md
+  - "۷. OS Detection": 07-os-detection.md
+  - "۸. NSE، Nmap Scripting Engine": 08-nse.md
+  - "۹. Firewall / IDS / IPS Evasion": 09-firewall-ids-ips-evasion.md
+  - "۱۰. Timing & Performance": 10-timing-performance.md
+  - "۱۱. Output & Reporting": 11-output-reporting.md
+  - "۱۲. سناریوهای عملی واقعی": 12-practical-scenarios.md
+  - "۱۳. تحلیل خروجی‌ها": 13-output-analysis.md
+  - "۱۴. اشتباهات رایج": 14-common-mistakes.md
+  - سلب مسئولیت: disclaimer.md

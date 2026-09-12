@@ -53,7 +53,6 @@ nmap -sS -sV 192.168.1.1
 - جست‌وجوی داخلی در نسخه وب
 - دکمه کپی برای code blockها در مستندات وب
 - workflow خودکار برای ساخت شاخه `gh-pages`
-- نگهداری فایل DOCX اصلی در `source/original.docx`
 
 ## نسخه وب
 
@@ -94,7 +93,6 @@ mkdocs serve
 │   ├── index.md
 │   ├── 01-introduction.md
 │   └── ...
-├── source/original.docx
 ├── CONTRIBUTING.md
 ├── DISCLAIMER.md
 ├── README.md
@@ -108,7 +106,7 @@ Persian Nmap reference covering command syntax, host discovery, port specificati
 
 ## منبع و دامنه محتوا
 
-این نسخه از سند DOCX اصلی تهیه و برای GitHub و MkDocs بازآرایی شده است. محتوای فنی منبع بدون تحقیق بیرونی یا اصلاح محتوایی گسترده منتقل شده است.
+این نسخه از سند DOCX اصلی تهیه و برای GitHub و MkDocs بازآرایی شده است. محتوای فنی منبع بدون تحقیق بیرونی یا اصلاح محتوایی گسترده منتقل شده است. فایل DOCX اصلی در این ریپو ذخیره نشده است.
 
 ## مجوز
 
