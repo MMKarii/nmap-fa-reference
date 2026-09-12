@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/fa/assets/brand-banner.svg" alt="Nmap Reference" width="100%">
+  <img src="docs/fa/assets/brand-banner.jpg" alt="Nmap Professional Reference" width="100%">
 </p>
 
 <p align="center">
@@ -7,6 +7,7 @@
   <a href="https://mmkarii.github.io/nmap-fa-reference/fa/"><img src="https://img.shields.io/badge/docs-فارسی-239f40" alt="Persian docs"></a>
   <a href="https://mmkarii.github.io/nmap-fa-reference/en/"><img src="https://img.shields.io/badge/docs-English-0284c7" alt="English docs"></a>
   <a href="https://nmap.org/book/man.html"><img src="https://img.shields.io/badge/reference-Nmap%20Official-0f766e" alt="Official Nmap reference"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY%204.0-6b7280" alt="CC BY 4.0"></a>
 </p>
 
 <h1 align="center">Nmap Professional Reference · مرجع حرفه‌ای Nmap</h1>
@@ -41,10 +42,13 @@
 ├── docs/
 │   ├── fa/                 # Persian / RTL edition
 │   └── en/                 # English / LTR edition
+├── assets/
+│   └── social-preview.jpg
 ├── mkdocs.fa.yml
 ├── mkdocs.en.yml
 ├── README.fa.md
 ├── README.en.md
+├── LICENSE
 └── .github/workflows/docs.yml
 ```
 
@@ -57,3 +61,7 @@ sudo nmap -sS -sV --top-ports 200 -T3 --reason target -oA initial_assessment
 ```
 
 This is a general assessment pattern, not a universal command. Scope, network capacity, and authorization determine the correct parameters.
+
+## License
+
+Original project documentation is released under the Creative Commons Attribution 4.0 International license. See [LICENSE](LICENSE). Third-party names, trademarks, linked documentation, and material retain their respective rights.
