@@ -1,63 +1,121 @@
 # ۱۱. Output & Reporting
 
-Nmap قابلیت خروجی گرفتن در قالب‌های مختلف را برای استفاده در گزارش‌ها یا پردازش خودکار فراهم می‌کند.
+<div class="chapter-meta">
+<strong>هدف فصل:</strong> ذخیره نتیجه به شکلی که هم برای انسان قابل‌خواندن باشد و هم برای Automation و گزارش‌گیری قابل پردازش.
+</div>
 
-## `-oN (Normal Output)`
+Nmap چند Output format دارد. انتخاب Format باید بر اساس مصرف‌کننده نتیجه انجام شود: Analyst، Automation، SIEM، Parser یا گزارش نهایی.
 
-- **فرمت:** خروجی متنی استاندارد که در ترمینال مشاهده می‌شود.
+## Interactive Output
 
-- **مناسب برای:** خواندن توسط انسان، گزارش‌های ساده.
+خروجی پیش‌فرض روی Terminal نمایش داده می‌شود و اطلاعات Runtime مثل Progress و بعضی Alertهای Scan را نیز نشان می‌دهد.
 
-**مثال:**
+این حالت File format مستقل ندارد.
+
+## `-oN <file>`، Normal Output
+
+خروجی Human-readable را در File ذخیره می‌کند.
 
 ```bash
-nmap -sS 192.168.1.1 -oN scan_results.txt
+nmap -sS 192.168.1.1 -oN scan_results.nmap
 ```
 
-## `-oX (XML Output)`
+Normal Output شبیه خروجی Terminal است، ولی تمام اطلاعات Runtime حالت Interactive را نگه نمی‌دارد.
 
-- **فرمت:** خروجی ساختاریافته XML.
+**مناسب برای:** مطالعه دستی، Attachment گزارش و آرشیو ساده.
 
-- **مناسب برای:** پردازش خودکار، وارد کردن به ابزارهای دیگر (مانند SIEM، گزارش‌گیرهای حرفه‌ای مانند Dradis، Metasploit).
+## `-oX <file>`، XML Output
 
-**مثال:**
+XML پایدارترین Format برای پردازش برنامه‌ای است.
 
 ```bash
 nmap -sS -sV 192.168.1.1 -oX scan_results.xml
 ```
 
-## `-oG (Grepable Output)`
+**مناسب برای:**
 
-- **فرمت:** خروجی متنی تک خطی برای هر میزبان که با ابزارهای خط فرمان مانند grep، awk، cut به راحتی قابل پردازش است.
+- Parser و Automation
+- Import در ابزارهای دیگر
+- تبدیل به Report
+- نگهداری ساختاریافته اطلاعات Scan
 
-- **مناسب برای:** استخراج سریع اطلاعات خاص از اسکن‌های بزرگ.
+برای Integration نرم‌افزاری، Reference Guide استفاده از XML را نسبت به Grepable ترجیح می‌دهد.
 
-- **توجه:** این فرمت منسوخ شده اما هنوز پرکاربرد است.
+## `-oG <file>`، Grepable Output
 
-**مثال:**
+هر Host را تقریباً در یک Line متنی نمایش می‌دهد و برای `grep`، `awk` و ابزارهای Shell راحت است.
 
 ```bash
 nmap -sS 192.168.1.0/24 -oG scan_results.gnmap
 ```
 
-## `-oA (Output to all formats)`
+!!! warning "Deprecated"
+    Grepable Output deprecated است. برای ابزار یا Pipeline جدید، XML انتخاب مطمئن‌تری است.
 
-- **عملکرد:** به طور همزمان خروجی‌های Normal، XML و Grepable با یک نام پایه ایجاد می‌کند.
+## `-oA <basename>`، سه Format اصلی
 
-**مثال:**
-
-```bash
-nmap -sS 192.168.1.1 -oA my_scan
-```
-
-(فایل‌های my_scan.nmap، my_scan.xml، my_scan.gnmap ایجاد می‌شوند)
-
-## `--stats-every`
-
-- **عملکرد:** در حین اسکن طولانی، هر چند ثانیه یک بار آمار پیشرفت (زمان سپری شده، درصد اتمام، میزبان‌های باقی‌مانده) را نمایش می‌دهد.
-
-**مثال:**
+Normal، XML و Grepable را هم‌زمان با یک Basename ایجاد می‌کند.
 
 ```bash
---stats-every 10s
+nmap -sS -sV 192.168.1.1 -oA assessment
 ```
+
+Fileهای زیر ساخته می‌شوند:
+
+```text
+assessment.nmap
+assessment.xml
+assessment.gnmap
+```
+
+برای Assessmentهایی که هم خواندن دستی و هم Parsing لازم دارند، `-oA` انتخاب عملی است.
+
+## `--reason`
+
+دلیل Host state یا Port state را نمایش می‌دهد.
+
+```bash
+sudo nmap -sS --reason 192.168.1.10
+```
+
+مثلاً مشخص می‌کند یک Port به دلیل `syn-ack` باز یا به دلیل `reset` بسته تشخیص داده شده است. این اطلاعات برای Troubleshooting و تحلیل State بسیار مفید است.
+
+## `--stats-every <time>`
+
+در Scan طولانی به‌صورت دوره‌ای Progress information چاپ می‌کند.
+
+```bash
+sudo nmap -sS -p- --stats-every 30s target
+```
+
+## `--append-output`
+
+به‌جای overwrite کردن File، نتیجه را Append می‌کند.
+
+```bash
+nmap target -oN history.nmap --append-output
+```
+
+برای XML باید با احتیاط استفاده شود، چون Append ساده چند XML document می‌تواند File را برای Parser نامعتبر کند.
+
+## Output به Standard Output
+
+با `-` به‌عنوان Filename می‌توان Format را به stdout فرستاد.
+
+```bash
+nmap -oX - target
+```
+
+برای Pipelineها مفید است.
+
+## الگوی پیشنهادی برای Assessment
+
+```bash
+sudo nmap -sS -sV --top-ports 200 --reason target -oA scans/initial
+```
+
+نام File را طوری انتخاب کنید که Scope، تاریخ یا مرحله Assessment مشخص باشد. این کار مقایسه Scanها و Audit trail را ساده‌تر می‌کند.
+
+## مرجع رسمی
+
+- [Nmap Output](https://nmap.org/book/man-output.html)
