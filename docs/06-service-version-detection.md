@@ -1,49 +1,98 @@
 # ۶. Service & Version Detection
 
-## `-sV (Service and Version Detection)`
+<div class="chapter-meta">
+<strong>هدف فصل:</strong> تشخیص Service و Version با درک Probeها، Intensity و محدودیت‌های Version Detection.
+</div>
 
-- **عملکرد:** پس از شناسایی پورت باز، Nmap بسته‌های پروب مخصوصی به آن پورت ارسال کرده و پاسخ (Banner) را تحلیل می‌کند. این پاسخ با پایگاه‌داده الگوهای nmap-service-probes مقایسه می‌شود تا سرویس و نسخه آن تشخیص داده شود.
+## `-sV`
 
-- **Banner Grabbing:** هسته اصلی این قابلیت است.
-
-- **False Positive/Negative:** ممکن است رخ دهد. مثلاً اگر سرویس Banner خود را تغییر داده باشد یا پروب Nmap برای آن سرویس کامل نباشد.
-
-- **تاثیر روی Performance:** زمان اسکن را به طور قابل توجهی افزایش می‌دهد، زیرا نیاز به ارسال پروب‌های اضافی و انتظار برای پاسخ دارد.
-
-## `--version-intensity <level> (0-9)`
-
-- **عملکرد:** شدت یا تعداد پروب‌هایی که برای شناسایی نسخه ارسال می‌شوند را کنترل می‌کند.
-
-- **سطح ۰:** هیچ پروب نسخه‌یابی ارسال نمی‌شود (فقط تشخیص سرویس مبتنی بر پورت).
-
-- **سطح ۱ تا ۹:** با افزایش سطح، پروب‌های بیشتر و احتمالاً نادرتری ارسال می‌شود.
-
-**مثال:**
+`-sV` Version Detection را فعال می‌کند. Nmap پس از پیدا کردن Portهای مناسب، Probeهای Application-aware می‌فرستد و پاسخ را با الگوهای موجود در `nmap-service-probes` تطبیق می‌دهد.
 
 ```bash
-nmap -sV --version-intensity 5 192.168.1.1
+nmap -sV 192.168.1.10
 ```
 
-## `--version-light و --version-all`
+نتیجه می‌تواند شامل مواردی مثل Service name، Product، Version، Extra Info، Device type و CPE باشد.
 
-- **--version-light:** معادل --version-intensity 2 است. سریع‌تر اما کمتر جامع.
+!!! note "Banner Grabbing فقط بخشی از فرایند است"
+    Version Detection فقط خواندن Banner نیست. Nmap Probeهای مختلف می‌فرستد و پاسخ آن‌ها را با Signatureهای `nmap-service-probes` تطبیق می‌دهد.
 
-- **--version-all:** معادل --version-intensity 9 است. کندتر اما جامع‌تر.
+## دقت و خطا
 
-**مثال:**
+Version Detection قطعی نیست. خطا یا عدم شناسایی می‌تواند به دلایل زیر رخ دهد:
+
+- Banner تغییر داده شده باشد.
+- Service سفارشی یا Proxy در مسیر باشد.
+- Product در Database الگوی مناسب نداشته باشد.
+- Firewall یا Middlebox پاسخ را تغییر دهد.
+- Service روی Port غیرمعمول اجرا شود.
+
+برای تصمیم امنیتی مهم، نتیجه را با شواهد دیگر تأیید کنید.
+
+## `--version-intensity <0-9>`
+
+Intensity تعیین می‌کند چه تعداد Probe با rarityهای مختلف امتحان شوند.
+
+```bash
+nmap -sV --version-intensity 5 192.168.1.10
+```
+
+- مقدار پایین‌تر: سریع‌تر و با Probe کمتر.
+- مقدار بالاتر: Probeهای بیشتر و احتمال شناسایی بالاتر، با زمان بیشتر.
+- مقدار پیش‌فرض Nmap برابر 7 است.
+
+!!! info "Intensity صفر"
+    `--version-intensity 0` به معنی «هیچ Probeای ارسال نمی‌شود» نیست. Probeهایی که مستقیماً برای Port موردنظر تعریف شده‌اند می‌توانند مستقل از Intensity اجرا شوند.
+
+## `--version-light`
+
+Alias برای `--version-intensity 2` است.
 
 ```bash
 nmap -sV --version-light 192.168.1.0/24
 ```
 
-## `--allports`
+برای Inventory سریع مناسب است، ولی احتمال شناسایی Serviceهای کمتر رایج پایین‌تر می‌آید.
 
-- **عملکرد:** به طور پیش‌فرض، Nmap پس از شناسایی یک سرویس روی یک پورت، پورت‌های دیگر با همان شماره را در همان میزبان با پروب‌های کمتری چک می‌کند (به فرض اینکه سرویس یکسان باشد). این سوئیچ این بهینه‌سازی را غیرفعال کرده و تمام پورت‌ها را به طور کامل پروب می‌کند.
+## `--version-all`
 
-**مثال:**
+Alias برای `--version-intensity 9` است و همه Probeهای Version Detection را در Scope مناسب امتحان می‌کند.
 
 ```bash
-nmap -sV --allports 192.168.1.1
+nmap -sV --version-all 192.168.1.10
 ```
 
-- **موارد استفاده:** زمانی که احتمال می‌رود یک میزبان نسخه‌های متفاوتی از یک سرویس روی پورت‌های مختلف اجرا کند.
+## `--allports`
+
+رفتار این Option در متن اولیه پروژه اشتباه توصیف شده بود.
+
+Nmap Version Detection به‌طور پیش‌فرض بعضی Portها را طبق Directiveهای `Exclude` در `nmap-service-probes` کنار می‌گذارد. نمونه معروف TCP/9100 است، چون بعضی Printerها داده ورودی را چاپ می‌کنند.
+
+`--allports` باعث می‌شود Version Detection این Excludeها را نادیده بگیرد.
+
+```bash
+nmap -sV --allports 192.168.1.10
+```
+
+!!! warning "استفاده با آگاهی"
+    روی تجهیزات خاص، به‌خصوص Printerها، Probe کردن Portهایی که عمداً Exclude شده‌اند می‌تواند اثر جانبی ایجاد کند.
+
+## یک Workflow مناسب
+
+ابتدا Port Discovery:
+
+```bash
+sudo nmap -sS --top-ports 200 192.168.1.10
+```
+
+سپس Version Detection روی Portهای موردنظر:
+
+```bash
+nmap -sV -p 22,80,443,8080 192.168.1.10
+```
+
+این روش در بسیاری از Assessmentها کنترل بیشتری نسبت به اجرای Version Detection سنگین روی همه Portها می‌دهد.
+
+## مرجع رسمی
+
+- [Service and Version Detection](https://nmap.org/book/man-version-detection.html)
