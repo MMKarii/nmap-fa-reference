@@ -1,0 +1,72 @@
+site_name: مرجع جامع Nmap به زبان فارسی
+site_description: مستند حرفه‌ای فارسی Nmap برای یادگیری، مراجعه سریع و ارزیابی مجاز امنیتی
+site_url: https://mmkarii.github.io/nmap-fa-reference/fa/
+repo_url: https://github.com/MMKarii/nmap-fa-reference
+repo_name: MMKarii/nmap-fa-reference
+edit_uri: edit/main/docs/fa/
+docs_dir: docs/fa
+site_dir: site/fa
+
+theme:
+  name: material
+  language: fa
+  direction: rtl
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: حالت تاریک
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: حالت روشن
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - خانه: index.md
+  - شروع:
+      - مسیر یادگیری: learning-path.md
+      - برگه تقلب: cheatsheet.md
+  - مبانی:
+      - "۱. معرفی بنیادین Nmap": 01-introduction.md
+      - "۲. Syntax و ساختار دستورات": 02-syntax.md
+      - "۳. Host Discovery، کشف میزبان": 03-host-discovery.md
+      - "۴. Port Specification": 04-port-specification.md
+  - اسکن و شناسایی:
+      - "۵. Scan Types، انواع اسکن": 05-scan-types.md
+      - "۶. Service & Version Detection": 06-service-version-detection.md
+      - "۷. OS Detection": 07-os-detection.md
+      - "۸. NSE": 08-nse.md
+  - عملیات:
+      - "۹. Firewall / IDS / IPS Evasion": 09-firewall-ids-ips-evasion.md
+      - "۱۰. Timing & Performance": 10-timing-performance.md
+      - "۱۱. Output & Reporting": 11-output-reporting.md
+      - "۱۲. سناریوهای عملی": 12-practical-scenarios.md
+  - تحلیل:
+      - "۱۳. تحلیل خروجی‌ها": 13-output-analysis.md
+      - "۱۴. اشتباهات رایج": 14-common-mistakes.md
+  - منابع: references.md
+  - سلب مسئولیت: disclaimer.md
