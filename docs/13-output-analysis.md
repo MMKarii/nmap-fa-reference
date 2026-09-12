@@ -1,42 +1,120 @@
 # ۱۳. تحلیل خروجی‌ها
 
-## وضعیت پورت‌ها
+<div class="chapter-meta">
+<strong>هدف فصل:</strong> تفسیر Port stateها و Confidence نتیجه بدون تبدیل خروجی Nmap به نتیجه قطعی یا اولویت‌بندی شتاب‌زده.
+</div>
 
-- **open:** پورت باز است و یک سرویس/برنامه در حال گوش دادن و پذیرش اتصال است.
+## Port Stateها
 
-- **اولویت حمله:** بالا. مستقیماً در معرض خطر است.
+### `open`
 
-- **closed:** پورت قابل دسترسی است، اما هیچ سرویسی روی آن گوش نمی‌دهد. میزبان زنده است.
+یک Application روی Port در حال دریافت Connection یا Packet است.
 
-- **اولویت حمله:** پایین. اما می‌تواند برای تشخیص OS یا میزبان زنده مفید باشد.
+`open` بودن به‌تنهایی Vulnerability نیست. Service، Version، Configuration و Exposure باید جداگانه بررسی شوند.
 
-- **filtered:** بسته پروب به پورت نرسیده یا پاسخ آن مسدود شده است (معمولاً توسط فایروال، iptables یا دستگاه شبکه). وضعیت پورت نامشخص است.
+### `closed`
 
-- **اولویت حمله:** متوسط. نیاز به تکنیک‌های عبور از فایروال دارد.
+Host قابل دسترسی است، ولی Application در آن Port گوش نمی‌دهد. Closed Port می‌تواند برای Host discovery یا OS fingerprinting اطلاعات مفید ایجاد کند.
 
-- **unfiltered:** (در اسکن‌های ACK) پورت قابل دسترسی است، اما مشخص نیست open است یا closed.
+### `filtered`
 
-- **open|filtered:** Nmap نتوانسته تشخیص دهد پورت open است یا filtered (معمولاً در اسکن‌های UDP، FIN، Xmas).
+Nmap نمی‌تواند تعیین کند Port باز است یا بسته، چون Packet یا Reply توسط Firewall، Filter یا مانع شبکه کنترل شده است.
 
-- **closed|filtered:** (در اسکن‌های IP Protocol) نتوانسته تشخیص دهد.
+### `unfiltered`
 
-## تشخیص False Result
+Port از نظر Probe قابل دسترسی است، ولی Scan مورد استفاده نمی‌تواند مشخص کند `open` است یا `closed`. این State در ACK Scan رایج است.
 
-False Positive (باز تشخیص اشتباه): پورت به اشتباه open گزارش می‌شود.
+### `open|filtered`
 
-- **علل:** فایروال‌های Transparent Proxy، سیستم‌های Load Balancer، IPS که پاسخ جعلی می‌فرستند.
+Nmap نمی‌تواند بین `open` و `filtered` تفاوت بگذارد. این State در Scanهایی که نبود Reply چند تفسیر دارد، مثل UDP یا FIN/NULL/Xmas، دیده می‌شود.
 
-- **راه تشخیص:** اجرای اسکن از زوایای مختلف، استفاده از تکنیک‌های اسکن مختلف، استفاده از ابزارهای دیگر مانند Netcat.
+### `closed|filtered`
 
-False Negative (بسته تشخیص اشتباه): پورت open است اما بسته یا filtered گزارش می‌شود.
+Nmap در بعضی Scan contextها نمی‌تواند بین `closed` و `filtered` تمایز ایجاد کند. به‌جای فرض یکی از دو حالت، نوع Scan و Reason را بررسی کنید.
 
-- **علل:** فیلترینگ تهاجمی، نرخ بالای اسکن (timeout سریع)، خطا در شبکه.
+## همیشه `--reason` را در تحلیل جدی در نظر بگیرید
 
-- **راه تشخیص:** اجرای اسکن با نرخ پایین‌تر (-T2)، افزایش timeout (--max-retries)، استفاده از -Pn.
+```bash
+sudo nmap -sS --reason target
+```
 
-## اولویت‌بندی نتایج برای حمله
+Reason نشان می‌دهد چه Packet یا Event باعث State شده است، مثلاً `syn-ack`، `reset` یا ICMP unreachable.
 
-- ۱. پورت‌های Open با سرویس‌های شناخته شده و پرخطر: (مثلاً SMB, RDP, SSH با نسخه قدیمی، Web با اپلیکیشن‌های شناخته شده).
-- ۲. پورت‌های Open با سرویس‌های غیرمعمول یا سفارشی: ممکن است آسیب‌پذیری‌های zero-day داشته باشند.
-- ۳. پورت‌های Filtered: نیاز به تلاش بیشتر برای عبور از فایروال دارند.
-- ۴. اطلاعات سیستم عامل و نسخه سرویس: برای مطابقت با exploit های موجود.
+## False Positive و False Negative
+
+### False Positive
+
+Service یا Port به شکلی گزارش می‌شود که واقعیت Target را دقیق نشان نمی‌دهد.
+
+علل ممکن:
+
+- Transparent Proxy یا Load Balancer
+- Middlebox که Reply تولید می‌کند
+- Service emulation
+- Banner یا Response سفارشی
+
+### False Negative
+
+Service موجود است ولی Scan آن را پیدا نمی‌کند یا State مبهم گزارش می‌شود.
+
+علل ممکن:
+
+- Packet loss
+- Rate limiting
+- Firewall policy
+- Timeout تهاجمی
+- Retry کم
+- Scope Port ناقص
+
+## روش Validation
+
+1. `--reason` را بررسی کنید.
+2. Scan را با Timing محافظه‌کارانه‌تر تکرار کنید.
+3. Service Detection را روی Port مشخص اجرا کنید.
+4. در صورت نیاز از Protocol client مناسب مثل `curl`، `openssl s_client` یا ابزار مدیریتی Service استفاده کنید.
+5. نتیجه را از یک Network vantage point دیگر مقایسه کنید، اگر Scope اجازه می‌دهد.
+
+## اولویت‌بندی برای بررسی امنیتی
+
+به‌جای «اولویت حمله»، در گزارش حرفه‌ای از اولویت بررسی امنیتی استفاده کنید.
+
+### اولویت بالا
+
+- Serviceهای Internet-facing یا خارج از Segment مورد انتظار
+- Versionهای قدیمی یا End-of-Life
+- Management protocolها مثل SSH، RDP، SMB و Admin Web UI در Exposure نامناسب
+- Authentication ضعیف یا Anonymous access تأییدشده
+
+### اولویت متوسط
+
+- Serviceهای ناشناخته یا سفارشی
+- Portهای غیرمعمول با Version Detection ناقص
+- `filtered` stateهایی که با Architecture مورد انتظار تطابق ندارند
+
+### اولویت پایین‌تر
+
+- Closed Portها
+- Serviceهای شناخته‌شده و Patch شده با Exposure و Access control درست
+
+اولویت نهایی باید بر اساس Asset criticality، Exposure، Authentication، Version و Business context تعیین شود، نه فقط Port number.
+
+## نمونه تحلیل
+
+```text
+PORT    STATE     SERVICE  REASON
+22/tcp  open      ssh      syn-ack
+80/tcp  filtered  http     no-response
+443/tcp open      https    syn-ack
+```
+
+تفسیر:
+
+- `22/tcp`: TCP handshake قابل شروع است. مرحله بعد Service/Version و Access policy است.
+- `80/tcp`: State نامشخص است و ممکن است Filter در مسیر باشد.
+- `443/tcp`: Service قابل دسترسی است. Version Detection و TLS configuration باید جداگانه بررسی شوند.
+
+## مرجع رسمی
+
+- [Nmap Reference Guide](https://nmap.org/book/man.html)
+- [Port Scanning Basics](https://nmap.org/book/man-port-scanning-basics.html)
+- [Output](https://nmap.org/book/man-output.html)
