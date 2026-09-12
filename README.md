@@ -1,26 +1,47 @@
-<div align="center" dir="rtl">
+<p align="center">
+  <img src="docs/assets/brand-banner.svg" alt="Nmap Persian Reference" width="100%">
+</p>
 
-# سند جامع مرجع ابزار Nmap
+<p align="center">
+  <a href="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml"><img src="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml/badge.svg" alt="Docs build"></a>
+  <a href="https://mmkarii.github.io/nmap-fa-reference/"><img src="https://img.shields.io/badge/docs-online-0284c7" alt="Online docs"></a>
+  <a href="https://nmap.org/book/man.html"><img src="https://img.shields.io/badge/reference-Nmap%20Official-0f766e" alt="Official Nmap reference"></a>
+  <img src="https://img.shields.io/badge/language-Persian-239f40" alt="Persian">
+  <img src="https://img.shields.io/badge/layout-RTL-334155" alt="RTL">
+</p>
 
-مرجع فارسی فصل‌بندی‌شده برای یادگیری، مراجعه سریع و استفاده مسئولانه از Nmap
+<h1 align="center">مرجع جامع فارسی Nmap</h1>
 
-[![Persian](https://img.shields.io/badge/language-Persian-239f40)](https://github.com/MMKarii/nmap-fa-reference)
-[![Docs](https://img.shields.io/badge/docs-MkDocs-526CFE)](https://mmkarii.github.io/nmap-fa-reference/)
-[![Nmap](https://img.shields.io/badge/topic-Nmap-1f6feb)](https://nmap.org/)
-[![Security](https://img.shields.io/badge/use-authorized%20testing-b42318)](DISCLAIMER.md)
+<p align="center">مستند فصل‌بندی‌شده برای یادگیری، مراجعه سریع و ارزیابی امنیتی مجاز با تمرکز بر دقت فنی، خوانایی و تجربه کاربری.</p>
 
-[مشاهده مستندات آنلاین](https://mmkarii.github.io/nmap-fa-reference/) • [شروع مطالعه](docs/01-introduction.md) • [سلب مسئولیت](DISCLAIMER.md) • [مشارکت](CONTRIBUTING.md)
-
-</div>
+<p align="center">
+  <a href="https://mmkarii.github.io/nmap-fa-reference/">مطالعه نسخه آنلاین</a> ·
+  <a href="docs/learning-path.md">مسیر یادگیری</a> ·
+  <a href="docs/cheatsheet.md">Cheat Sheet</a> ·
+  <a href="docs/references.md">منابع رسمی</a>
+</p>
 
 > [!IMPORTANT]
-> دستورات و تکنیک‌های این مجموعه را فقط روی سامانه‌ها و شبکه‌هایی اجرا کنید که مالک آن‌ها هستید یا مجوز صریح برای ارزیابی آن‌ها دارید.
+> دستورات و تکنیک‌های این مجموعه را فقط روی سامانه‌ها و شبکه‌هایی اجرا کنید که مالک آن‌ها هستید یا برای ارزیابی آن‌ها مجوز صریح دارید.
 
 ## درباره پروژه
 
-این ریپو نسخه GitHub سند فارسی Nmap است. محتوا به ۱۴ فصل مستقل تقسیم شده تا مطالعه، جست‌وجو و ارجاع به مباحث فنی ساده‌تر شود. دستورهای خط فرمان در بلوک‌های مجزا قرار گرفته‌اند تا ترکیب متن راست‌به‌چپ و گزینه‌های انگلیسی، ترتیب فرمان‌ها را خراب نکند.
+این ریپو نسخه GitHub و وب یک مرجع فارسی Nmap است. محتوای سند اولیه به فصل‌های مستقل Markdown تبدیل شده، فرمان‌ها برای نمایش صحیح در متن راست‌به‌چپ بازآرایی شده‌اند و بخش‌های فنی با Nmap Reference Guide و NSEDoc تطبیق داده می‌شوند.
 
-## فهرست مطالب
+هدف پروژه، ارائه یک مرجع قابل استفاده برای دانشجو، ادمین شبکه، SOC، Blue Team و ارزیابی امنیتی مجاز است. ادعاهای فنی مطلق مثل «غیرقابل شناسایی» یا «همیشه دقیق» حذف یا محدود شده‌اند، چون رفتار Nmap به نوع Scan، سطح دسترسی، سیستم هدف، فایروال و شرایط شبکه وابسته است.
+
+## دسترسی سریع
+
+| بخش | کاربرد |
+|---|---|
+| [نسخه آنلاین](https://mmkarii.github.io/nmap-fa-reference/) | مطالعه با جست‌وجو، ناوبری و ظاهر RTL |
+| [مسیر یادگیری](docs/learning-path.md) | مسیر پیشنهادی برای سطح پایه، میانی و پیشرفته |
+| [Cheat Sheet](docs/cheatsheet.md) | دستورهای رایج برای مراجعه سریع |
+| [منابع رسمی](docs/references.md) | Nmap Reference Guide و NSEDoc |
+| [سلب مسئولیت](DISCLAIMER.md) | محدوده استفاده مسئولانه |
+| [مشارکت](CONTRIBUTING.md) | روش پیشنهاد اصلاح و بهبود |
+
+## فصل‌ها
 
 | فصل | موضوع |
 |---:|---|
@@ -35,34 +56,37 @@
 | ۹ | [Firewall / IDS / IPS Evasion](docs/09-firewall-ids-ips-evasion.md) |
 | ۱۰ | [Timing & Performance](docs/10-timing-performance.md) |
 | ۱۱ | [Output & Reporting](docs/11-output-reporting.md) |
-| ۱۲ | [سناریوهای عملی واقعی](docs/12-practical-scenarios.md) |
+| ۱۲ | [سناریوهای عملی](docs/12-practical-scenarios.md) |
 | ۱۳ | [تحلیل خروجی‌ها](docs/13-output-analysis.md) |
 | ۱۴ | [اشتباهات رایج](docs/14-common-mistakes.md) |
 
-## نمونه دستور
+## شروع سریع
+
+کشف میزبان‌های فعال در یک LAN:
 
 ```bash
-nmap -sS -sV 192.168.1.1
+nmap -sn 192.168.1.0/24
 ```
 
-## ویژگی‌های نسخه GitHub
+ارزیابی اولیه TCP با Service Detection:
 
-- فصل‌بندی محتوا در فایل‌های مستقل Markdown
-- نمایش صحیح‌تر فرمان‌ها در متن فارسی
-- نسخه وب RTL با Material for MkDocs
-- جست‌وجوی داخلی در نسخه وب
-- دکمه کپی برای code blockها در مستندات وب
-- workflow خودکار برای ساخت شاخه `gh-pages`
+```bash
+sudo nmap -sS -sV --top-ports 200 -T3 --reason target -oA initial_assessment
+```
 
-## نسخه وب
+مشاهده مستندات یک NSE script قبل از اجرا:
 
-آدرس در نظر گرفته‌شده برای GitHub Pages:
+```bash
+nmap --script-help http-title
+```
 
-`https://mmkarii.github.io/nmap-fa-reference/`
+## استاندارد محتوایی
 
-workflow موجود در `.github/workflows/docs.yml` پس از push روی `main` مستندات را با MkDocs می‌سازد و در شاخه `gh-pages` قرار می‌دهد. برای اولین انتشار، در تنظیمات Repository بخش Pages، منبع انتشار را روی شاخه `gh-pages` قرار دهید.
+این پروژه در بازبینی فنی از مستندات رسمی Nmap به‌عنوان مرجع اصلی استفاده می‌کند. مواردی مثل رفتار `--allports`، محدودیت Scan Typeها، سطح دسترسی لازم برای Raw Packet scans، خروجی XML و دسته‌های NSE بر اساس مرجع رسمی بازنویسی می‌شوند.
 
-## اجرای محلی مستندات
+برای رفتار دقیق و نسخه‌محور هر گزینه، [Nmap Reference Guide](https://nmap.org/book/man.html) مرجع نهایی است.
+
+## اجرای مستندات در سیستم محلی
 
 ```bash
 python -m venv .venv
@@ -84,15 +108,19 @@ pip install -r requirements.txt
 mkdocs serve
 ```
 
-## ساختار ریپو
+## ساختار پروژه
 
 ```text
 .
 ├── .github/workflows/docs.yml
 ├── docs/
+│   ├── assets/
+│   ├── stylesheets/
 │   ├── index.md
-│   ├── 01-introduction.md
-│   └── ...
+│   ├── learning-path.md
+│   ├── cheatsheet.md
+│   ├── references.md
+│   └── 01...14 chapters
 ├── CONTRIBUTING.md
 ├── DISCLAIMER.md
 ├── README.md
@@ -102,12 +130,8 @@ mkdocs serve
 
 ## English summary
 
-Persian Nmap reference covering command syntax, host discovery, port specification, scan types, service and OS detection, NSE, timing, output formats, practical scenarios, result analysis, and common mistakes.
-
-## منبع و دامنه محتوا
-
-این نسخه از سند DOCX اصلی تهیه و برای GitHub و MkDocs بازآرایی شده است. محتوای فنی منبع بدون تحقیق بیرونی یا اصلاح محتوایی گسترده منتقل شده است. فایل DOCX اصلی در این ریپو ذخیره نشده است.
+A Persian Nmap reference focused on accurate command documentation, structured learning, authorized security assessment, RTL documentation, and official-reference alignment.
 
 ## مجوز
 
-فایل License عمداً اضافه نشده است. تا زمان انتخاب مجوز توسط صاحب اثر، حقوق بازنشر و ویرایش به صورت خودکار واگذار نمی‌شود.
+مجوز بازنشر هنوز توسط صاحب پروژه انتخاب نشده است. تا زمان انتخاب License، حقوق بازنشر و ویرایش به صورت خودکار واگذار نمی‌شود.
