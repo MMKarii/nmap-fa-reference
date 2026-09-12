@@ -1,194 +1,209 @@
 # ۸. NSE، Nmap Scripting Engine
 
-NSE یک قابلیت قدرتمند برای نوشتن و اجرای اسکریپت‌ها در زبان Lua است که امکان انجام طیف گسترده‌ای از وظایف امنیتی شبکه را فراهم می‌کند.
+<div class="chapter-meta">
+<strong>هدف فصل:</strong> استفاده کنترل‌شده از NSE با شناخت Category، Script Argument و اثر جانبی هر Script.
+</div>
+
+Nmap Scripting Engine یا NSE امکان اجرای Scriptهای Lua را برای Discovery، Version Detection، Vulnerability checks و وظایف شبکه فراهم می‌کند.
+
+!!! warning "Scriptها Sandbox نیستند"
+    طبق مستندات رسمی، NSE Scriptها در Sandbox اجرا نمی‌شوند. Scriptهای Third-party یا Scriptهایی با Categoryهای intrusive، brute، exploit و dos را بدون بررسی Source و Scope اجرا نکنید.
 
 ## معماری NSE
 
-- **اسکریپت‌ها:** فایل‌های Lua (با پسوند .nse) در دایرکتوری scripts/.
+- **Scriptها:** فایل‌های `.nse` در مجموعه Scriptهای Nmap.
+- **Libraryها:** Moduleهای Lua در `nselib`.
+- **Engine:** بخش Nmap که Script ruleها، execution و Output را مدیریت می‌کند.
 
-- **کتابخانه‌ها:** مجموعه‌ای از توابع کمکی Lua (در دایرکتوری nselib/) که توسط اسکریپت‌ها استفاده می‌شوند.
+## Categoryهای مهم
 
-- **موتور اسکریپت:** بخشی از کد Nmap که اسکریپت‌ها را بارگذاری، اجرا و مدیریت می‌کند.
+| Category | کاربرد کلی |
+|---|---|
+| `auth` | بررسی Authentication و Access control |
+| `broadcast` | Discovery با Broadcast در شبکه محلی |
+| `brute` | Credential guessing و Brute Force |
+| `default` | Scriptهای انتخاب‌شده برای `-sC` یا `--script=default` |
+| `discovery` | جمع‌آوری اطلاعات بیشتر از Host و Service |
+| `dos` | بررسی یا اجرای رفتارهای مرتبط با Denial of Service |
+| `exploit` | Scriptهای مرتبط با Exploitation |
+| `external` | استفاده از Service یا منبع Third-party |
+| `fuzzer` | ارسال Inputهای غیرعادی برای تست رفتار Service |
+| `intrusive` | Scriptهایی با احتمال اثر جانبی یا ترافیک قابل‌توجه |
+| `malware` | بررسی نشانه‌های Malware |
+| `safe` | Scriptهایی که برای اجرای کم‌ریسک‌تر طراحی شده‌اند |
+| `version` | تکمیل Version Detection |
+| `vuln` | بررسی Vulnerabilityهای شناخته‌شده |
 
-## دسته‌بندی اسکریپت‌ها
+NSEDoc در نسخه‌های جدید ممکن است Categoryهای اضافه مانند `info` را نیز فهرست کند. برای وضعیت دقیق Scriptها، NSEDoc همان نسخه Nmap را بررسی کنید.
 
-- **auth:** شناسایی و دور زدن احراز هویت (مانند brute-force).
+## اجرای Script
 
-- **brute:** انجام حملات Brute-Force روی سرویس‌های مختلف.
-
-- **vuln:** بررسی آسیب‌پذیری‌های شناخته شده.
-
-- **exploit:** تلاش برای بهره‌برداری از آسیب‌پذیری (با احتیاط استفاده شود).
-
-- **discovery:** جمع‌آوری اطلاعات بیشتر درباره میزبان‌ها و سرویس‌ها.
-
-- **safe:** اسکریپت‌هایی که به میزبان آسیب نمی‌رسانند و ترافیک کم تولید می‌کنند.
-
-- **intrusive:** اسکریپت‌هایی که ممکن است باعث crash سرویس، ثبت لاگ زیاد یا شناسایی شوند.
-
-- **malware:** بررسی علائم بدافزار بر روی میزبان.
-
-- **dos:** اسکریپت‌های مرتبط با حملات Denial of Service (با مسئولیت کامل کاربر).
-
-- **version:** تکمیل کننده -sV. (اغلب به صورت خودکار اجرا می‌شود).
-
-- **default:** دسته‌ای که اگر کاربر دسته خاصی را مشخص نکند، اجرا می‌شوند. معمولاً شامل safe و برخی discovery است.
-
-## دستورات NSE
-
-`--script <script-name|category|expression>`: اسکریپت‌ها یا دسته‌ها را برای اجرا مشخص می‌کند.
-
-**مثال:**
+یک Script مشخص:
 
 ```bash
---script http-title
+nmap --script http-title -p 80,443 target
 ```
 
-(یک اسکریپت)
-
-**مثال:**
+یک Category:
 
 ```bash
---script vuln
+nmap --script safe target
 ```
 
-(یک دسته)
-
-**مثال:**
+Expression:
 
 ```bash
---script "http-* and not (brute or dos)"
+nmap --script "http-* and not (brute or dos)" target
 ```
 
-(عبارت)
-
-- **`--script-args <args>`:** آرگومان‌هایی را به اسکریپت‌ها ارسال می‌کند.
-
-**مثال:**
+Scriptهای Default:
 
 ```bash
---script http-headers --script-args http-headers.url=/admin
+nmap -sC target
 ```
 
-`--script-help <script-name|category|expression>`: مستندات اسکریپت‌ها را نمایش می‌دهد.
+`-sC` معادل `--script=default` است.
 
-**مثال:**
+## `--script-args`
+
+Argumentهای Script را ارسال می‌کند.
 
 ```bash
-nmap --script-help ssh-brute
+nmap --script http-headers --script-args http-headers.url=/admin target
 ```
 
-- **--script-updatedb:** پایگاه‌داده اسکریپت‌های NSE را به روز می‌کند. (معمولاً با به‌روزرسانی Nmap انجام می‌شود).
+Argument هر Script را قبل از اجرا در NSEDoc بررسی کنید.
 
-## معرفی ۲۰ اسکریپت حیاتی
+## `--script-help`
+
+Documentation Script را بدون اجرای آن نمایش می‌دهد.
+
+```bash
+nmap --script-help ssh-hostkey
+```
+
+برای Script ناشناخته، این دستور باید قبل از اجرا یکی از اولین مراحل باشد.
+
+## `--script-updatedb`
+
+پس از اضافه یا حذف Script در Directory مربوط به NSE، Database Scriptها را Refresh می‌کند.
+
+```bash
+sudo nmap --script-updatedb
+```
+
+## ۲۰ Script پرکاربرد
 
 ### ۱. `http-headers`
 
-دریافت هدرهای HTTP.
+HTTP headerها را نمایش می‌دهد.
 
 ```bash
-nmap -sV --script http-headers <target>
+nmap -sV --script http-headers -p 80,443 target
 ```
 
 ### ۲. `http-title`
 
-استخراج عنوان (Title) صفحات وب.
+Title صفحه وب را نمایش می‌دهد.
 
 ```bash
-nmap -sV --script http-title <target>
+nmap -sV --script http-title -p 80,443 target
 ```
 
 ### ۳. `ssl-cert`
 
-دریافت و نمایش گواهی SSL/TLS.
+Certificate سرویس TLS را بررسی می‌کند.
 
 ```bash
-nmap -sV --script ssl-cert -p 443 <target>
+nmap --script ssl-cert -p 443 target
 ```
 
 ### ۴. `vulners`
 
-بررسی آسیب‌پذیری‌های شناخته شده بر اساس نسخه سرویس‌ها (با استفاده از پایگاه‌داده vulners.com).
+از اطلاعات CPE و Version استفاده می‌کند و برای جست‌وجوی Vulnerability به API سرویس Vulners درخواست می‌فرستد. این Script در Categoryهای `vuln`، `safe` و `external` قرار دارد.
 
 ```bash
-nmap -sV --script vulners <target>
+nmap -sV --script vulners target
 ```
+
+!!! info "Privacy"
+    چون `vulners` از سرویس External استفاده می‌کند، نام نرم‌افزار و Version یا CPE برای Query به سرویس بیرونی ارسال می‌شود.
 
 ### ۵. `smb-os-discovery`
 
-کشف اطلاعات سیستم عامل از طریق پروتکل SMB.
+اطلاعات OS و SMB را از Service مربوط جمع‌آوری می‌کند.
 
 ```bash
-nmap --script smb-os-discovery -p 445 <target>
+nmap --script smb-os-discovery -p 445 target
 ```
 
 ### ۶. `smb-vuln-ms17-010`
 
-بررسی آسیب‌پذیری EternalBlue (MS17-010).
+نشانه‌های Vulnerability مربوط به MS17-010 را بررسی می‌کند.
 
 ```bash
-nmap --script smb-vuln-ms17-010 -p 445 <target>
+nmap --script smb-vuln-ms17-010 -p 445 target
 ```
 
 ### ۷. `ftp-anon`
 
-بررسی دسترسی ناشناس (Anonymous) به FTP.
+Anonymous FTP access را بررسی می‌کند.
 
 ```bash
-nmap --script ftp-anon -p 21 <target>
+nmap --script ftp-anon -p 21 target
 ```
 
 ### ۸. `ssh-hostkey`
 
-دریافت کلید میزبان SSH.
+SSH Host Keyها را جمع‌آوری می‌کند.
 
 ```bash
-nmap --script ssh-hostkey --script-args ssh_hostkey=full -p 22 <target>
+nmap --script ssh-hostkey --script-args ssh_hostkey=full -p 22 target
 ```
 
 ### ۹. `dns-brute`
 
-Brute-Force ساب‌دامین.
+برای پیدا کردن Subdomainهای احتمالی از Wordlist استفاده می‌کند.
 
 ```bash
-nmap --script dns-brute <target_domain>
+nmap --script dns-brute example.com
 ```
 
 ### ۱۰. `mysql-empty-password`
 
-بررسی اکانت‌های MySQL با رمز خالی.
+وجود Accountهای MySQL با Password خالی را بررسی می‌کند.
 
 ```bash
-nmap --script mysql-empty-password -p 3306 <target>
+nmap --script mysql-empty-password -p 3306 target
 ```
 
 ### ۱۱. `redis-info`
 
-جمع‌آوری اطلاعات از سرویس Redis.
+اطلاعات Service Redis را جمع‌آوری می‌کند.
 
 ```bash
-nmap --script redis-info -p 6379 <target>
+nmap --script redis-info -p 6379 target
 ```
 
 ### ۱۲. `http-sql-injection`
 
-تشخیص اولیه فرم‌های وب آسیب‌پذیر به SQL Injection.
+Web pageها را Spider می‌کند و نشانه‌های SQL Injection را بررسی می‌کند. Category این Script شامل `intrusive` و `vuln` است.
 
 ```bash
-nmap -sV --script http-sql-injection <target>
+nmap -sV --script http-sql-injection target
 ```
 
 ### ۱۳. `http-enum`
 
-کشف و brute-force دایرکتوری‌ها و فایل‌های رایج روی وب سرور.
+Pathها و Resourceهای رایج Web Server را بررسی می‌کند.
 
 ```bash
-nmap -sV --script http-enum <target>
+nmap -sV --script http-enum target
 ```
 
 ### ۱۴. `broadcast-dhcp-discover`
 
-کشف سرورهای DHCP در شبکه محلی.
+DHCP Serverهای قابل مشاهده در Broadcast domain را پیدا می‌کند.
 
 ```bash
 sudo nmap --script broadcast-dhcp-discover
@@ -196,48 +211,63 @@ sudo nmap --script broadcast-dhcp-discover
 
 ### ۱۵. `snmp-info`
 
-جمع‌آوری اطلاعات از طریق SNMP (با جامعه public).
+اطلاعات SNMP را در صورت دسترسی جمع‌آوری می‌کند.
 
 ```bash
-nmap -sU -p 161 --script snmp-info <target>
+sudo nmap -sU -p 161 --script snmp-info target
 ```
 
 ### ۱۶. `rdp-enum-encryption`
 
-بررسی الگوریتم‌های رمزنگاری پشتیبانی شده توسط RDP.
+Encryption configuration مربوط به RDP را بررسی می‌کند.
 
 ```bash
-nmap -sV --script rdp-enum-encryption -p 3389 <target>
+nmap -sV --script rdp-enum-encryption -p 3389 target
 ```
 
 ### ۱۷. `vnc-info`
 
-جمع‌آوری اطلاعات از سرویس VNC.
+اطلاعات Service VNC را جمع‌آوری می‌کند.
 
 ```bash
-nmap -sV --script vnc-info -p 5900 <target>
+nmap -sV --script vnc-info -p 5900 target
 ```
 
 ### ۱۸. `http-csrf`
 
-تشخیص فرم‌های وب آسیب‌پذیر به CSRF.
+فرم‌های Web را برای نشانه‌های CSRF بررسی می‌کند و در Categoryهای `intrusive`، `exploit` و `vuln` قرار دارد.
 
 ```bash
-nmap -sV --script http-csrf <target>
+nmap --script http-csrf -p 80,443 target
 ```
 
 ### ۱۹. `http-robots.txt`
 
-بازیابی و تجزیه فایل robots.txt.
+Entryهای Disallow در `/robots.txt` را نمایش می‌دهد.
 
 ```bash
-nmap -sV --script http-robots.txt <target>
+nmap --script http-robots.txt -p 80,443 target
 ```
 
 ### ۲۰. `whois-ip`
 
-انجام استعلام WHOIS روی آدرس IP هدف (با استفاده از سرور whois.arin.net).
+WHOIS information مربوط به IP را از منابع External دریافت می‌کند.
 
 ```bash
-nmap --script whois-ip <target>
+nmap --script whois-ip target
 ```
+
+## Workflow حرفه‌ای برای NSE
+
+1. Script را در NSEDoc پیدا کنید.
+2. Category و Script Arguments را بررسی کنید.
+3. مشخص کنید Script External یا Intrusive است یا خیر.
+4. Scope مجوز را دوباره بررسی کنید.
+5. ابتدا روی یک Host یا Service محدود اجرا کنید.
+6. Output را همراه با Version Detection و شواهد دیگر تفسیر کنید.
+
+## مرجع رسمی
+
+- [Nmap Scripting Engine](https://nmap.org/book/man-nse.html)
+- [NSE Usage](https://nmap.org/book/nse-usage.html)
+- [NSEDoc](https://nmap.org/nsedoc/)
