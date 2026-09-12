@@ -1,3 +1,5 @@
+<p class="project-banner"><img src="assets/brand-banner.jpg" alt="Nmap Professional Reference"></p>
+
 <section class="nmap-hero">
   <span class="hero-kicker">English Nmap Reference</span>
   <h1>Professional Nmap Reference</h1>
