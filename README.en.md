@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/en/assets/brand-banner.svg" alt="Nmap Reference" width="100%">
+  <img src="docs/en/assets/brand-banner.jpg" alt="Nmap Reference" width="100%">
 </p>
 
 <p align="center"><a href="README.md">Language selection</a> · <a href="README.fa.md">فارسی</a></p>
@@ -12,7 +12,8 @@
   <a href="https://mmkarii.github.io/nmap-fa-reference/en/">Read online</a> ·
   <a href="docs/en/learning-path.md">Learning Path</a> ·
   <a href="docs/en/cheatsheet.md">Cheat Sheet</a> ·
-  <a href="docs/en/references.md">Official References</a>
+  <a href="docs/en/references.md">Official References</a> ·
+  <a href="LICENSE">License</a>
 </p>
 
 > [!IMPORTANT]
@@ -62,3 +63,7 @@ sudo nmap -sS -sV --top-ports 200 -T3 --reason target -oA initial_assessment
 ## Technical standard
 
 The Nmap Reference Guide and NSEDoc are the primary sources for technical review. For exact, version-specific option behavior, official Nmap documentation remains the final reference.
+
+## License
+
+Original project documentation is released under the Creative Commons Attribution 4.0 International license. See [LICENSE](LICENSE).
