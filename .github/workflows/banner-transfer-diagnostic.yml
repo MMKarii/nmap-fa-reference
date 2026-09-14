@@ -15,54 +15,31 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect download page bundle
-        env:
-          SHARE_URL: https://firestorage.ai/ja/f/lt5TlIrU285b
+      - name: Inspect Firestorage download calls
         run: |
           set -euo pipefail
           python - <<'PY'
-          import os, re, urllib.request
-          from urllib.parse import urljoin
+          import urllib.request
 
           headers={'User-Agent':'Mozilla/5.0'}
-          share=os.environ['SHARE_URL']
-          def get(url):
+          urls=[
+            'https://firestorage.ai/_next/static/chunks/4899-d89df949f2dbd5af.js',
+            'https://firestorage.ai/_next/static/chunks/5841-1160578ba9bb4f3e.js',
+          ]
+          needles=['/shares/','shareEndpoint','download','api.firestorage.ai/prod/file/','presign','signed','fileId']
+          for url in urls:
               req=urllib.request.Request(url,headers=headers)
               with urllib.request.urlopen(req,timeout=30) as r:
-                  return r.read(), r.geturl(), r.headers.get('content-type','')
-
-          body,final,_=get(share)
-          html=body.decode('utf-8','ignore')
-          scripts=re.findall(r'''<script[^>]+src=["']([^"']+)["']''',html,re.I)
-          print('SCRIPT_COUNT',len(scripts))
-          for src in scripts:
-              url=urljoin(final,src)
-              if '/app/(files)/' not in url and '/chunks/' not in url:
-                  continue
-              try:
-                  data,jsurl,_=get(url)
-              except Exception as e:
-                  print('FETCH_FAIL',url,e)
-                  continue
-              text=data.decode('utf-8','ignore')
-              hits=[]
-              patterns=[
-                r'''https?://[^"'`\\s]+''',
-                r'''["'`]([^"'`]{0,120}(?:download|share|public|file|object|signed|presign|api)[^"'`]{0,180})["'`]''',
-                r'''fetch\(([^)]{1,300})\)'''
-              ]
-              for pat in patterns:
-                  for m in re.findall(pat,text,re.I):
-                      s=m if isinstance(m,str) else ''.join(m)
-                      if any(k in s.lower() for k in ('download','share','public','file','object','signed','presign','api')):
-                          hits.append(s)
-              if hits:
-                  print('--- BUNDLE',jsurl,'SIZE',len(data),'---')
-                  seen=set()
-                  for h in hits:
-                      h=h.replace('\\/','/')
-                      if h in seen: continue
-                      seen.add(h)
-                      print(h[:800])
-                      if len(seen)>=120: break
+                  text=r.read().decode('utf-8','ignore')
+              print('\n===== URL',url,'LEN',len(text),'=====')
+              for needle in needles:
+                  start=0
+                  count=0
+                  while True:
+                      pos=text.find(needle,start)
+                      if pos<0 or count>=12: break
+                      print('\n--- NEEDLE',needle,'POS',pos,'---')
+                      print(text[max(0,pos-1800):pos+3200])
+                      start=pos+len(needle)
+                      count+=1
           PY
