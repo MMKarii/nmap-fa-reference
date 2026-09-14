@@ -15,7 +15,7 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect temporary share page
+      - name: Inspect download page bundle
         env:
           SHARE_URL: https://firestorage.ai/ja/f/lt5TlIrU285b
         run: |
@@ -24,35 +24,45 @@ jobs:
           import os, re, urllib.request
           from urllib.parse import urljoin
 
-          url = os.environ['SHARE_URL']
-          req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0'})
-          with urllib.request.urlopen(req, timeout=30) as r:
-              body = r.read()
-              final_url = r.geturl()
-              ctype = r.headers.get('content-type','')
-          print('FINAL_URL', final_url)
-          print('CONTENT_TYPE', ctype)
-          print('SIZE', len(body))
-          text = body.decode('utf-8','ignore')
-          print('--- candidate links ---')
-          vals = []
-          vals += re.findall(r'''(?:href|src)=["']([^"']+)["']''', text, flags=re.I)
-          vals += re.findall(r'''https?://[^"'<>\\s]+''', text, flags=re.I)
-          vals += [x.replace('\\/','/') for x in re.findall(r'''https?:\\/\\/[^"'<>\\s]+''', text, flags=re.I)]
-          seen = set()
-          for v in vals:
-              full = urljoin(final_url, v)
-              if full in seen:
+          headers={'User-Agent':'Mozilla/5.0'}
+          share=os.environ['SHARE_URL']
+          def get(url):
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  return r.read(), r.geturl(), r.headers.get('content-type','')
+
+          body,final,_=get(share)
+          html=body.decode('utf-8','ignore')
+          scripts=re.findall(r'''<script[^>]+src=["']([^"']+)["']''',html,re.I)
+          print('SCRIPT_COUNT',len(scripts))
+          for src in scripts:
+              url=urljoin(final,src)
+              if '/app/(files)/' not in url and '/chunks/' not in url:
                   continue
-              seen.add(full)
-              low = full.lower()
-              if any(k in low for k in ('download','file','storage','webp','api','share')):
-                  print(full[:1000])
-          print('--- html markers ---')
-          for key in ('download','webp','file_id','fileId','publicId','shareId','subdir','api/'):
-              print(key, text.lower().find(key.lower()))
-          for key in ('download','webp','fileId','shareId'):
-              pos=text.lower().find(key.lower())
-              if pos >= 0:
-                  print('CONTEXT', key, text[max(0,pos-400):pos+800].replace('\n',' ')[:1200])
+              try:
+                  data,jsurl,_=get(url)
+              except Exception as e:
+                  print('FETCH_FAIL',url,e)
+                  continue
+              text=data.decode('utf-8','ignore')
+              hits=[]
+              patterns=[
+                r'''https?://[^"'`\\s]+''',
+                r'''["'`]([^"'`]{0,120}(?:download|share|public|file|object|signed|presign|api)[^"'`]{0,180})["'`]''',
+                r'''fetch\(([^)]{1,300})\)'''
+              ]
+              for pat in patterns:
+                  for m in re.findall(pat,text,re.I):
+                      s=m if isinstance(m,str) else ''.join(m)
+                      if any(k in s.lower() for k in ('download','share','public','file','object','signed','presign','api')):
+                          hits.append(s)
+              if hits:
+                  print('--- BUNDLE',jsurl,'SIZE',len(data),'---')
+                  seen=set()
+                  for h in hits:
+                      h=h.replace('\\/','/')
+                      if h in seen: continue
+                      seen.add(h)
+                      print(h[:800])
+                      if len(seen)>=120: break
           PY
