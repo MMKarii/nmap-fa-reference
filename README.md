@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/brand-banner.jpg" alt="Nmap Persian Reference" width="100%">
+  <img src="docs/assets/brand-banner.webp" alt="Nmap Persian Reference" width="100%">
 </p>
 
 <p align="center">
