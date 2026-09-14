@@ -6,6 +6,7 @@
   <a href="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml"><img src="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml/badge.svg" alt="Docs build"></a>
   <a href="https://mmkarii.github.io/nmap-fa-reference/"><img src="https://img.shields.io/badge/docs-online-0284c7" alt="Online docs"></a>
   <a href="https://nmap.org/book/man.html"><img src="https://img.shields.io/badge/reference-Nmap%20Official-0f766e" alt="Official Nmap reference"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY%204.0-f97316" alt="CC BY 4.0"></a>
   <img src="https://img.shields.io/badge/language-Persian-239f40" alt="Persian">
   <img src="https://img.shields.io/badge/layout-RTL-334155" alt="RTL">
 </p>
@@ -40,6 +41,7 @@
 | [منابع رسمی](docs/references.md) | Nmap Reference Guide و NSEDoc |
 | [سلب مسئولیت](DISCLAIMER.md) | محدوده استفاده مسئولانه |
 | [مشارکت](CONTRIBUTING.md) | روش پیشنهاد اصلاح و بهبود |
+| [مجوز](LICENSE) | CC BY 4.0 و شرایط بازنشر |
 
 ## فصل‌ها
 
@@ -123,6 +125,7 @@ mkdocs serve
 │   └── 01...14 chapters
 ├── CONTRIBUTING.md
 ├── DISCLAIMER.md
+├── LICENSE
 ├── README.md
 ├── mkdocs.yml
 └── requirements.txt
@@ -134,4 +137,6 @@ A Persian Nmap reference focused on accurate command documentation, structured l
 
 ## مجوز
 
-مجوز بازنشر هنوز توسط صاحب پروژه انتخاب نشده است. تا زمان انتخاب License، حقوق بازنشر و ویرایش به صورت خودکار واگذار نمی‌شود.
+محتوای اصلی این پروژه تحت [Creative Commons Attribution 4.0 International](LICENSE) منتشر شده است. بازنشر، اقتباس و استفاده تجاری مجاز است، مشروط به ذکر منبع، ارائه لینک مجوز و اعلام تغییرات.
+
+نام‌ها، علائم تجاری و محتوای متعلق به اشخاص ثالث تحت حقوق صاحبان آن‌ها باقی می‌ماند. این پروژه یک مرجع آموزشی مستقل است و به‌عنوان پروژه رسمی Nmap معرفی نمی‌شود.
