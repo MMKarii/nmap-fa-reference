@@ -39,8 +39,8 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements.txt
 
-      - name: Test documentation integrity checker
-        run: python -m unittest scripts.test_check_docs
+      - name: Test documentation tooling
+        run: python -m unittest discover -s scripts -p 'test_*.py'
 
       - name: Check bilingual structure and local links
         run: python scripts/check_docs.py
