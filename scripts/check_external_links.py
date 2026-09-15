@@ -5,7 +5,7 @@ import sys
 import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\((https?://[^)\s]+)\)")
@@ -24,9 +24,18 @@ def classify_http_status(status: int) -> str:
     return "warning"
 
 
+def _ascii_url(url: str) -> str:
+    """Percent-encode Unicode URL components before handing them to http.client."""
+    parsed = urlsplit(url)
+    path = quote(parsed.path, safe="/%:@-._~!$&'()*+,;=")
+    query = quote(parsed.query, safe="=&?/:;+,%@-._~!$'()*")
+    fragment = quote(parsed.fragment, safe="=&?/:;+,%@-._~!$'()*")
+    return urlunsplit((parsed.scheme, parsed.netloc, path, query, fragment))
+
+
 def check_url(url: str, opener=urlopen, retries: int = 2, timeout: int = 12) -> tuple[str, str]:
     request = Request(
-        url,
+        _ascii_url(url),
         headers={
             "User-Agent": "nmap-fa-reference-link-checker/1.0",
             "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
