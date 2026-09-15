@@ -9,7 +9,7 @@
 <p align="center">مستند فصل‌بندی‌شده برای یادگیری، مراجعه سریع و ارزیابی امنیتی مجاز با تمرکز بر دقت فنی و تجربه کاربری RTL.</p>
 
 <p align="center">
-  <a href="https://mmkarii.github.io/nmap-fa-reference/fa/">مطالعه نسخه آنلاین</a> ·
+  <a href="docs/fa/index.md">مطالعه نسخه فارسی</a> ·
   <a href="docs/fa/learning-path.md">مسیر یادگیری</a> ·
   <a href="docs/fa/cheatsheet.md">Cheat Sheet</a> ·
   <a href="docs/fa/references.md">منابع رسمی</a> ·
@@ -29,8 +29,8 @@
 
 | بخش | کاربرد |
 |---|---|
-| [نسخه آنلاین فارسی](https://mmkarii.github.io/nmap-fa-reference/fa/) | مطالعه با ناوبری RTL و جست‌وجو |
-| [نسخه انگلیسی](https://mmkarii.github.io/nmap-fa-reference/en/) | مستند کامل LTR |
+| [مطالعه فارسی](docs/fa/index.md) | ورود به نسخه فارسی داخل GitHub |
+| [نسخه انگلیسی](docs/en/index.md) | مستند کامل انگلیسی داخل GitHub |
 | [مسیر یادگیری](docs/fa/learning-path.md) | مسیر پیشنهادی برای سطح پایه تا پیشرفته |
 | [Cheat Sheet](docs/fa/cheatsheet.md) | دستورات رایج برای مراجعه سریع |
 | [منابع رسمی](docs/fa/references.md) | Nmap Reference Guide و NSEDoc |
