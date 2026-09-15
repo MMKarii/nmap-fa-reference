@@ -4,47 +4,65 @@ on:
   push:
     branches:
       - main
-      - master
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: docs-deploy
+  group: docs-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Configure Git credentials
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: '3.x'
 
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-
-      - uses: actions/cache@v4
+      - name: Cache MkDocs
+        uses: actions/cache@v4
         with:
-          key: mkdocs-material-${{ env.cache_id }}
+          key: mkdocs-material-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
           path: ~/.cache
           restore-keys: |
-            mkdocs-material-
+            mkdocs-material-${{ runner.os }}-
 
       - name: Install documentation dependencies
         run: pip install -r requirements.txt
 
-      - name: Validate documentation
-        run: mkdocs build --strict
+      - name: Build Persian documentation
+        run: mkdocs build --strict -f mkdocs.fa.yml -d site/fa
 
-      - name: Deploy GitHub Pages
-        run: mkdocs gh-deploy --force
+      - name: Build English documentation
+        run: mkdocs build --strict -f mkdocs.en.yml -d site/en
+
+      - name: Add bilingual root landing page
+        run: cp site-root/index.html site/index.html
+
+      - name: Verify bilingual output
+        run: |
+          test -f site/index.html
+          test -f site/fa/index.html
+          test -f site/en/index.html
+          test -f site/fa/14-common-mistakes/index.html
+          test -f site/en/14-common-mistakes/index.html
+          test -f site/fa/assets/brand-banner.webp
+          test -f site/en/assets/brand-banner.webp
+
+      - name: Deploy to gh-pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: true
