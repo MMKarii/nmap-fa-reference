@@ -1,0 +1,58 @@
+import io
+import unittest
+from urllib.error import HTTPError, URLError
+
+from scripts.check_external_links import check_url, classify_http_status
+
+
+class _Response:
+    def __init__(self, status=200):
+        self.status = status
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+
+class ExternalLinkTests(unittest.TestCase):
+    def test_status_classification(self):
+        self.assertEqual(classify_http_status(200), "ok")
+        self.assertEqual(classify_http_status(301), "ok")
+        self.assertEqual(classify_http_status(403), "warning")
+        self.assertEqual(classify_http_status(429), "warning")
+        self.assertEqual(classify_http_status(404), "error")
+        self.assertEqual(classify_http_status(410), "error")
+        self.assertEqual(classify_http_status(500), "warning")
+
+    def test_check_url_accepts_success(self):
+        result = check_url("https://example.test/", opener=lambda *_args, **_kwargs: _Response(200))
+        self.assertEqual(result[0], "ok")
+
+    def test_check_url_fails_deterministic_not_found(self):
+        def opener(request, timeout=0):
+            raise HTTPError(request.full_url, 404, "Not Found", {}, io.BytesIO())
+
+        result = check_url("https://example.test/missing", opener=opener, retries=0)
+        self.assertEqual(result[0], "error")
+        self.assertIn("404", result[1])
+
+    def test_check_url_warns_on_rate_limit(self):
+        def opener(request, timeout=0):
+            raise HTTPError(request.full_url, 429, "Too Many Requests", {}, io.BytesIO())
+
+        result = check_url("https://example.test/rate", opener=opener, retries=0)
+        self.assertEqual(result[0], "warning")
+
+    def test_check_url_warns_on_transient_network_error(self):
+        def opener(_request, timeout=0):
+            raise URLError("temporary DNS failure")
+
+        result = check_url("https://example.test/transient", opener=opener, retries=1)
+        self.assertEqual(result[0], "warning")
+        self.assertIn("temporary DNS failure", result[1])
+
+
+if __name__ == "__main__":
+    unittest.main()
