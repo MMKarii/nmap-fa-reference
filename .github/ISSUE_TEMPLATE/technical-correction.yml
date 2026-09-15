@@ -1,0 +1,54 @@
+name: Technical correction
+description: Report an inaccurate Nmap command, behavior, explanation, or technical statement.
+title: "[Technical correction] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the reference. Do not include credentials, private IP inventories, customer names, secrets, or real target data.
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      description: Provide the documentation URL or repository path.
+      placeholder: docs/en/06-service-version-detection.md
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language edition
+      options:
+        - Persian
+        - English
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current statement
+      description: Quote only the shortest text needed to identify the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed correction
+      description: Explain what should change and why.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting reference
+      description: Prefer the official Nmap Reference Guide, NSEDoc, man page, or reproducible lab evidence.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets, credentials, private customer information, and real target data from this report.
+          required: true
