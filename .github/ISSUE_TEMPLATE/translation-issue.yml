@@ -1,0 +1,46 @@
+name: Translation issue
+description: Report a Persian/English mismatch, mistranslation, or terminology inconsistency.
+title: "[Translation] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please focus on the documentation wording. Do not include sensitive assessment or target information.
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      placeholder: docs/fa/07-os-detection.md
+    validations:
+      required: true
+  - type: dropdown
+    id: direction
+    attributes:
+      label: Translation direction affected
+      options:
+        - English → Persian
+        - Persian → English
+        - Terminology consistency in both
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problematic wording
+      description: Include the shortest excerpt needed to identify the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording
+      description: Provide the preferred translation or terminology and explain any technical nuance.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: This report contains no secrets, credentials, customer data, or real target details.
+          required: true
