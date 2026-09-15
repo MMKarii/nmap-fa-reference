@@ -1,0 +1,37 @@
+name: Broken link
+description: Report a broken internal, anchor, or external documentation link.
+title: "[Broken link] "
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page containing the link
+      placeholder: https://mmkarii.github.io/nmap-fa-reference/en/references/
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Broken link or anchor
+      placeholder: https://nmap.org/book/example.html or #section-name
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Include the HTTP status or browser behavior if known.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected destination
+      description: Provide the correct URL/section when you know it.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I did not include private assessment targets, credentials, or sensitive customer information.
+          required: true
