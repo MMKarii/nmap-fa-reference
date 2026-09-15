@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a documentation, navigation, QA, or learning improvement.
+title: "[Feature] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or learning need
+      description: What is difficult, missing, or unnecessarily repetitive today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+      description: Describe the smallest useful change.
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language impact
+      options:
+        - Persian
+        - English
+        - Both
+        - Repository/CI only
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References or examples
+      description: Add official Nmap references or comparable documentation examples when useful.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety and scope
+      options:
+        - label: The request is appropriate for education, administration, labs, or authorized security assessment.
+          required: true

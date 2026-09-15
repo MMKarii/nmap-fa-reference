@@ -11,6 +11,7 @@ copyright: CC BY 4.0 · MMKarii
 
 theme:
   name: material
+  custom_dir: overrides
   language: en
   direction: ltr
   features:
@@ -33,7 +34,15 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 
+plugins:
+  - search:
+      lang:
+        - en
+        - fa
+      separator: '[\s\-\u200c،؛,;:()/]+'
+
 extra:
+  social_image_url: https://mmkarii.github.io/nmap-fa-reference/assets/social-preview-v3.png
   alternate:
     - name: فارسی
       link: /nmap-fa-reference/fa/
@@ -61,6 +70,7 @@ nav:
   - Start Here:
       - Learning Path: learning-path.md
       - Cheat Sheet: cheatsheet.md
+      - Bilingual Glossary: glossary.md
   - Fundamentals:
       - "1. Nmap Fundamentals": 01-introduction.md
       - "2. Syntax and Command Structure": 02-syntax.md
