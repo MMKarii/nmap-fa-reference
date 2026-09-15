@@ -2,7 +2,12 @@ import io
 import unittest
 from urllib.error import HTTPError, URLError
 
-from scripts.check_external_links import _ascii_url, check_url, classify_http_status
+from scripts.check_external_links import (
+    _ascii_url,
+    check_url,
+    classify_http_status,
+    is_warning_only_url,
+)
 
 
 class _Response:
@@ -25,6 +30,11 @@ class ExternalLinkTests(unittest.TestCase):
         self.assertEqual(classify_http_status(404), "error")
         self.assertEqual(classify_http_status(410), "error")
         self.assertEqual(classify_http_status(500), "warning")
+
+    def test_project_pages_urls_are_warning_only_pre_deploy(self):
+        self.assertTrue(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/"))
+        self.assertTrue(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/fa/"))
+        self.assertFalse(is_warning_only_url("https://example.test/missing"))
 
     def test_unicode_url_is_percent_encoded_for_http_client(self):
         encoded = _ascii_url("https://example.test/راهنما?q=اسکن#بخش")
