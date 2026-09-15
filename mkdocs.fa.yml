@@ -11,6 +11,7 @@ copyright: CC BY 4.0 · MMKarii
 
 theme:
   name: material
+  custom_dir: overrides
   language: fa
   direction: rtl
   features:
@@ -33,7 +34,15 @@ theme:
         icon: material/brightness-4
         name: حالت روشن
 
+plugins:
+  - search:
+      lang:
+        - fa
+        - en
+      separator: '[\s\-\u200c،؛,;:()/]+'
+
 extra:
+  social_image_url: https://mmkarii.github.io/nmap-fa-reference/assets/social-preview-v3.png
   alternate:
     - name: فارسی
       link: /nmap-fa-reference/fa/
@@ -61,6 +70,7 @@ nav:
   - شروع:
       - مسیر یادگیری: learning-path.md
       - برگه تقلب: cheatsheet.md
+      - واژه‌نامه دوزبانه: glossary.md
   - مبانی:
       - "۱. معرفی بنیادین Nmap": 01-introduction.md
       - "۲. Syntax و ساختار دستورات": 02-syntax.md
