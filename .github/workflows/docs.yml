@@ -39,6 +39,12 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements.txt
 
+      - name: Test documentation integrity checker
+        run: python -m unittest scripts.test_check_docs
+
+      - name: Check bilingual structure and local links
+        run: python scripts/check_docs.py
+
       - name: Build Persian documentation
         run: mkdocs build --strict -f mkdocs.fa.yml -d site/fa
 
