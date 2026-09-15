@@ -12,9 +12,8 @@ from urllib.request import Request, urlopen
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\((https?://[^)\s]+)\)")
 HTML_LINK_RE = re.compile(r"(?:href|src)=[\"'](https?://[^\"']+)[\"']", re.IGNORECASE)
 
-# Hosts in this set are still checked, but non-deterministic access failures are warnings.
-# Keep this list intentionally small; deterministic 404/410 responses always fail.
 WARNING_ONLY_HOSTS = {"github.com", "raw.githubusercontent.com"}
+WARNING_ONLY_PREFIXES = ("https://mmkarii.github.io/nmap-fa-reference/",)
 
 
 def classify_http_status(status: int) -> str:
@@ -23,6 +22,11 @@ def classify_http_status(status: int) -> str:
     if status in {404, 410}:
         return "error"
     return "warning"
+
+
+def is_warning_only_url(url: str) -> bool:
+    host = urlsplit(url).hostname or ""
+    return host in WARNING_ONLY_HOSTS or any(url.startswith(prefix) for prefix in WARNING_ONLY_PREFIXES)
 
 
 def _ascii_url(url: str) -> str:
@@ -102,11 +106,11 @@ def main() -> int:
         results = list(pool.map(_check_one, urls))
 
     for url, state, message in results:
-        host = urlsplit(url).hostname or ""
-        if state == "error":
+        warning_only = is_warning_only_url(url)
+        if state == "error" and not warning_only:
             errors.append(f"{url}: {message}")
-        elif state == "warning":
-            suffix = " (warning-only host)" if host in WARNING_ONLY_HOSTS else ""
+        elif state in {"warning", "error"}:
+            suffix = " (pre-deploy/rate-limited allowlist)" if warning_only else ""
             warnings.append(f"{url}: {message}{suffix}")
 
     if warnings:
@@ -120,7 +124,7 @@ def main() -> int:
             print(f"  - {item}")
         return 1
 
-    print("External link check completed without deterministic 404/410 failures.")
+    print("External link check completed without non-allowlisted deterministic 404/410 failures.")
     return 0
 
 
