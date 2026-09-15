@@ -9,7 +9,7 @@
 <p align="center">Structured documentation for learning Nmap, quick lookup, and authorized security assessment with an emphasis on technical accuracy.</p>
 
 <p align="center">
-  <a href="https://mmkarii.github.io/nmap-fa-reference/en/">Read online</a> ·
+  <a href="docs/en/index.md">Read the English edition</a> ·
   <a href="docs/en/learning-path.md">Learning Path</a> ·
   <a href="docs/en/cheatsheet.md">Cheat Sheet</a> ·
   <a href="docs/en/references.md">Official References</a> ·
@@ -29,8 +29,8 @@ The material is intended for students, network administrators, SOC analysts, blu
 
 | Section | Purpose |
 |---|---|
-| [English documentation](https://mmkarii.github.io/nmap-fa-reference/en/) | LTR documentation with search and navigation |
-| [Persian documentation](https://mmkarii.github.io/nmap-fa-reference/fa/) | Complete RTL edition |
+| [English documentation](docs/en/index.md) | Open the English edition directly on GitHub |
+| [Persian documentation](docs/fa/index.md) | Open the Persian edition directly on GitHub |
 | [Learning Path](docs/en/learning-path.md) | Suggested beginner, intermediate, and advanced paths |
 | [Cheat Sheet](docs/en/cheatsheet.md) | Common commands for quick lookup |
 | [Official References](docs/en/references.md) | Nmap Reference Guide and NSEDoc |
