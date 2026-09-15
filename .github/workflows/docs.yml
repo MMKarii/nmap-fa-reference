@@ -39,11 +39,19 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements.txt
 
+      - name: Install social preview renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
+
       - name: Test documentation tooling
         run: python -m unittest discover -s scripts -p 'test_*.py'
 
-      - name: Check bilingual structure and local links
+      - name: Check bilingual structure links anchors and translation freshness
         run: python scripts/check_docs.py
+
+      - name: Check external links
+        run: python scripts/check_external_links.py
 
       - name: Build Persian documentation
         run: mkdocs build --strict -f mkdocs.fa.yml -d site/fa
@@ -51,18 +59,53 @@ jobs:
       - name: Build English documentation
         run: mkdocs build --strict -f mkdocs.en.yml -d site/en
 
+      - name: Create latest aliases
+        run: |
+          mkdir -p site/latest
+          cp -a site/fa site/latest/fa
+          cp -a site/en site/latest/en
+
+      - name: Build stable v2.0 snapshot from tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          V2_DIR="$RUNNER_TEMP/nmap-reference-v2"
+          git worktree add --detach "$V2_DIR" v2.0.0
+          trap 'git worktree remove --force "$V2_DIR" >/dev/null 2>&1 || true' EXIT
+          test "$(git -C "$V2_DIR" describe --tags --exact-match)" = "v2.0.0"
+          mkdir -p site/v2.0
+          mkdocs build --strict -f "$V2_DIR/mkdocs.fa.yml" -d "$GITHUB_WORKSPACE/site/v2.0/fa"
+          mkdocs build --strict -f "$V2_DIR/mkdocs.en.yml" -d "$GITHUB_WORKSPACE/site/v2.0/en"
+
+      - name: Render social preview
+        run: |
+          mkdir -p site/assets
+          rsvg-convert -w 1280 -h 640 assets/social-preview-v3.svg -o site/assets/social-preview-v3.png
+          test -s site/assets/social-preview-v3.png
+
       - name: Add bilingual root landing page
         run: cp site-root/index.html site/index.html
 
-      - name: Verify bilingual output
+      - name: Check built-site accessibility and metadata
+        run: python scripts/check_built_site.py
+
+      - name: Verify complete published output
         run: |
           test -f site/index.html
           test -f site/fa/index.html
           test -f site/en/index.html
+          test -f site/latest/fa/index.html
+          test -f site/latest/en/index.html
+          test -f site/v2.0/fa/index.html
+          test -f site/v2.0/en/index.html
           test -f site/fa/14-common-mistakes/index.html
           test -f site/en/14-common-mistakes/index.html
+          test -f site/fa/glossary/index.html
+          test -f site/en/glossary/index.html
           test -f site/fa/assets/brand-banner.webp
           test -f site/en/assets/brand-banner.webp
+          test -f site/assets/social-preview-v3.png
+          identify site/assets/social-preview-v3.png | grep -q '1280x640'
 
       - name: Deploy to gh-pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
