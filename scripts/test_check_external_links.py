@@ -2,7 +2,7 @@ import io
 import unittest
 from urllib.error import HTTPError, URLError
 
-from scripts.check_external_links import check_url, classify_http_status
+from scripts.check_external_links import _ascii_url, check_url, classify_http_status
 
 
 class _Response:
@@ -26,9 +26,29 @@ class ExternalLinkTests(unittest.TestCase):
         self.assertEqual(classify_http_status(410), "error")
         self.assertEqual(classify_http_status(500), "warning")
 
+    def test_unicode_url_is_percent_encoded_for_http_client(self):
+        encoded = _ascii_url("https://example.test/راهنما?q=اسکن#بخش")
+        encoded.encode("ascii")
+        self.assertIn("%D8%B1", encoded)
+        self.assertIn("%D8%A7", encoded)
+        self.assertIn("#%D8%A8", encoded)
+
     def test_check_url_accepts_success(self):
         result = check_url("https://example.test/", opener=lambda *_args, **_kwargs: _Response(200))
         self.assertEqual(result[0], "ok")
+
+    def test_check_url_passes_ascii_request_to_opener(self):
+        seen = []
+
+        def opener(request, timeout=0):
+            seen.append(request.full_url)
+            request.full_url.encode("ascii")
+            return _Response(200)
+
+        result = check_url("https://example.test/راهنما", opener=opener, retries=0)
+        self.assertEqual(result[0], "ok")
+        self.assertTrue(seen)
+        self.assertNotIn("راهنما", seen[0])
 
     def test_check_url_fails_deterministic_not_found(self):
         def opener(request, timeout=0):
