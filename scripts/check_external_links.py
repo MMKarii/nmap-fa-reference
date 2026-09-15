@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit, urlunsplit
@@ -33,7 +34,7 @@ def _ascii_url(url: str) -> str:
     return urlunsplit((parsed.scheme, parsed.netloc, path, query, fragment))
 
 
-def check_url(url: str, opener=urlopen, retries: int = 2, timeout: int = 12) -> tuple[str, str]:
+def check_url(url: str, opener=urlopen, retries: int = 1, timeout: int = 8) -> tuple[str, str]:
     request = Request(
         _ascii_url(url),
         headers={
@@ -62,7 +63,7 @@ def check_url(url: str, opener=urlopen, retries: int = 2, timeout: int = 12) -> 
             last_message = str(exc) or "timeout"
 
         if attempt < retries:
-            time.sleep(0.4 * (attempt + 1))
+            time.sleep(0.25 * (attempt + 1))
 
     return "warning", last_message
 
@@ -85,15 +86,22 @@ def collect_external_links(repo_root: Path) -> set[str]:
     return urls
 
 
+def _check_one(url: str) -> tuple[str, str, str]:
+    state, message = check_url(url)
+    return url, state, message
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     urls = sorted(collect_external_links(repo_root))
     errors: list[str] = []
     warnings: list[str] = []
 
-    print(f"Checking {len(urls)} unique external link(s)...")
-    for url in urls:
-        state, message = check_url(url)
+    print(f"Checking {len(urls)} unique external link(s) with bounded concurrency...")
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(urls)))) as pool:
+        results = list(pool.map(_check_one, urls))
+
+    for url, state, message in results:
         host = urlsplit(url).hostname or ""
         if state == "error":
             errors.append(f"{url}: {message}")
