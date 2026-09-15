@@ -4,8 +4,8 @@
 
 <p align="center">
   <a href="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml"><img src="https://github.com/MMKarii/nmap-fa-reference/actions/workflows/docs.yml/badge.svg" alt="Docs build"></a>
-  <a href="https://mmkarii.github.io/nmap-fa-reference/fa/"><img src="https://img.shields.io/badge/docs-فارسی-239f40" alt="Persian docs"></a>
-  <a href="https://mmkarii.github.io/nmap-fa-reference/en/"><img src="https://img.shields.io/badge/docs-English-0284c7" alt="English docs"></a>
+  <a href="docs/fa/index.md"><img src="https://img.shields.io/badge/docs-فارسی-239f40" alt="Persian docs"></a>
+  <a href="docs/en/index.md"><img src="https://img.shields.io/badge/docs-English-0284c7" alt="English docs"></a>
   <a href="https://nmap.org/book/man.html"><img src="https://img.shields.io/badge/reference-Nmap%20Official-0f766e" alt="Official Nmap reference"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY%204.0-6b7280" alt="CC BY 4.0"></a>
 </p>
@@ -20,13 +20,13 @@
 <td align="center" width="50%">
 <h2>فارسی</h2>
 <p>نسخه کامل RTL با ۱۴ فصل، مسیر یادگیری، Cheat Sheet و منابع رسمی.</p>
-<p><a href="https://mmkarii.github.io/nmap-fa-reference/fa/"><strong>مطالعه نسخه فارسی</strong></a></p>
+<p><a href="docs/fa/index.md"><strong>مطالعه نسخه فارسی</strong></a></p>
 <p><a href="README.fa.md">README فارسی</a></p>
 </td>
 <td align="center" width="50%">
 <h2>English</h2>
 <p>Complete LTR edition with 14 chapters, learning paths, a cheat sheet, and official references.</p>
-<p><a href="https://mmkarii.github.io/nmap-fa-reference/en/"><strong>Read the English edition</strong></a></p>
+<p><a href="docs/en/index.md"><strong>Read the English edition</strong></a></p>
 <p><a href="README.en.md">English README</a></p>
 </td>
 </tr>
