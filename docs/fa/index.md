@@ -1,3 +1,5 @@
+<p class="project-banner"><img src="assets/brand-banner.webp" alt="Nmap Professional Reference"></p>
+
 <section class="nmap-hero">
   <span class="hero-kicker">Persian Nmap Reference</span>
   <h1>مرجع حرفه‌ای فارسی Nmap</h1>
@@ -9,6 +11,7 @@
     <a class="primary" href="learning-path/">شروع مسیر یادگیری</a>
     <a href="cheatsheet/">Cheat Sheet</a>
     <a href="references/">منابع رسمی</a>
+    <a href="../en/">English</a>
     <a href="https://github.com/MMKarii/nmap-fa-reference">GitHub</a>
   </div>
 </section>
