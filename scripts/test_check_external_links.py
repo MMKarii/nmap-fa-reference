@@ -31,9 +31,10 @@ class ExternalLinkTests(unittest.TestCase):
         self.assertEqual(classify_http_status(410), "error")
         self.assertEqual(classify_http_status(500), "warning")
 
-    def test_project_pages_urls_are_warning_only_pre_deploy(self):
-        self.assertTrue(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/"))
-        self.assertTrue(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/fa/"))
+    def test_project_pages_urls_are_not_allowlisted(self):
+        self.assertFalse(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/"))
+        self.assertFalse(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/fa/"))
+        self.assertTrue(is_warning_only_url("https://github.com/MMKarii/nmap-fa-reference"))
         self.assertFalse(is_warning_only_url("https://example.test/missing"))
 
     def test_unicode_url_is_percent_encoded_for_http_client(self):
