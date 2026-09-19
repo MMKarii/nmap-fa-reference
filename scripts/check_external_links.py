@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\((https?://[^)\s]+)\)")
 HTML_LINK_RE = re.compile(r"(?:href|src)=[\"'](https?://[^\"']+)[\"']", re.IGNORECASE)
+PLAIN_URL_RE = re.compile(r"https?://[^\s<>'\"]+")
 
 WARNING_ONLY_HOSTS = {"github.com", "raw.githubusercontent.com"}
 
@@ -41,7 +42,7 @@ def check_url(url: str, opener=urlopen, retries: int = 1, timeout: int = 8) -> t
     request = Request(
         _ascii_url(url),
         headers={
-            "User-Agent": "nmap-fa-reference-link-checker/1.0",
+            "User-Agent": "nmap-fa-reference-link-checker/1.1",
             "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
             "Range": "bytes=0-1023",
         },
@@ -76,8 +77,16 @@ def collect_external_links(repo_root: Path) -> set[str]:
     for directory in (repo_root / "docs" / "fa", repo_root / "docs" / "en"):
         if directory.exists():
             files.extend(directory.rglob("*.md"))
-    files.extend(repo_root.glob("README*.md"))
-    for extra in (repo_root / "SECURITY.md", repo_root / "site-root" / "index.html"):
+
+    files.extend(repo_root.glob("*.md"))
+
+    for extra in (
+        repo_root / "site-root" / "index.html",
+        repo_root / "mkdocs.fa.yml",
+        repo_root / "mkdocs.en.yml",
+        repo_root / "overrides" / "main.html",
+        repo_root / ".github" / "repository-metadata.md",
+    ):
         if extra.exists():
             files.append(extra)
 
@@ -86,6 +95,8 @@ def collect_external_links(repo_root: Path) -> set[str]:
         text = path.read_text(encoding="utf-8")
         urls.update(match.group(1).rstrip(".,") for match in MARKDOWN_LINK_RE.finditer(text))
         urls.update(match.group(1).rstrip(".,") for match in HTML_LINK_RE.finditer(text))
+        urls.update(match.group(0).rstrip(".,);]}>") for match in PLAIN_URL_RE.finditer(text))
+
     return urls
 
 

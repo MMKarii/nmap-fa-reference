@@ -1,11 +1,14 @@
 import io
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.error import HTTPError, URLError
 
 from scripts.check_external_links import (
     _ascii_url,
     check_url,
     classify_http_status,
+    collect_external_links,
     is_warning_only_url,
 )
 
@@ -36,6 +39,25 @@ class ExternalLinkTests(unittest.TestCase):
         self.assertFalse(is_warning_only_url("https://mmkarii.github.io/nmap-fa-reference/fa/"))
         self.assertTrue(is_warning_only_url("https://github.com/MMKarii/nmap-fa-reference"))
         self.assertFalse(is_warning_only_url("https://example.test/missing"))
+
+    def test_collects_plain_urls_from_config_and_metadata(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / ".github").mkdir()
+            (root / "mkdocs.fa.yml").write_text(
+                "repo_url: https://github.com/MMKarii/nmap-fa-reference\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "repository-metadata.md").write_text(
+                "Website: https://github.com/MMKarii/nmap-fa-reference/blob/main/docs/fa/index.md\n",
+                encoding="utf-8",
+            )
+            links = collect_external_links(root)
+            self.assertIn("https://github.com/MMKarii/nmap-fa-reference", links)
+            self.assertIn(
+                "https://github.com/MMKarii/nmap-fa-reference/blob/main/docs/fa/index.md",
+                links,
+            )
 
     def test_unicode_url_is_percent_encoded_for_http_client(self):
         encoded = _ascii_url("https://example.test/راهنما?q=اسکن#بخش")

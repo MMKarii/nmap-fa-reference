@@ -1,7 +1,6 @@
 site_name: Nmap Professional Reference
 site_description: Professional English Nmap documentation for learning, quick reference, and authorized security assessment
 site_author: MMKarii
-site_url: https://mmkarii.github.io/nmap-fa-reference/en/
 repo_url: https://github.com/MMKarii/nmap-fa-reference
 repo_name: MMKarii/nmap-fa-reference
 edit_uri: edit/main/docs/en/
@@ -42,13 +41,14 @@ plugins:
       separator: '[\s\-\u200c،؛,;:()/]+'
 
 extra:
-  social_image_url: https://mmkarii.github.io/nmap-fa-reference/assets/social-preview-v3.png
+  canonical_base: https://github.com/MMKarii/nmap-fa-reference/blob/main/docs/en/
+  social_image_url: https://raw.githubusercontent.com/MMKarii/nmap-fa-reference/main/docs/fa/assets/brand-banner.webp
   alternate:
     - name: فارسی
-      link: /nmap-fa-reference/fa/
+      link: https://github.com/MMKarii/nmap-fa-reference/blob/main/docs/fa/index.md
       lang: fa
     - name: English
-      link: /nmap-fa-reference/en/
+      link: https://github.com/MMKarii/nmap-fa-reference/blob/main/docs/en/index.md
       lang: en
 
 extra_css:
