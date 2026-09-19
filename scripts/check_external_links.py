@@ -13,7 +13,6 @@ MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\((https?://[^)\s]+)\)")
 HTML_LINK_RE = re.compile(r"(?:href|src)=[\"'](https?://[^\"']+)[\"']", re.IGNORECASE)
 
 WARNING_ONLY_HOSTS = {"github.com", "raw.githubusercontent.com"}
-WARNING_ONLY_PREFIXES = ("https://mmkarii.github.io/nmap-fa-reference/",)
 
 
 def classify_http_status(status: int) -> str:
@@ -26,7 +25,7 @@ def classify_http_status(status: int) -> str:
 
 def is_warning_only_url(url: str) -> bool:
     host = urlsplit(url).hostname or ""
-    return host in WARNING_ONLY_HOSTS or any(url.startswith(prefix) for prefix in WARNING_ONLY_PREFIXES)
+    return host in WARNING_ONLY_HOSTS
 
 
 def _ascii_url(url: str) -> str:
@@ -110,7 +109,7 @@ def main() -> int:
         if state == "error" and not warning_only:
             errors.append(f"{url}: {message}")
         elif state in {"warning", "error"}:
-            suffix = " (pre-deploy/rate-limited allowlist)" if warning_only else ""
+            suffix = " (rate-limited host allowlist)" if warning_only else ""
             warnings.append(f"{url}: {message}{suffix}")
 
     if warnings:
